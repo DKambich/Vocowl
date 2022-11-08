@@ -1,36 +1,24 @@
-# build folder
-dist/
-build/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# logs
-logs/
-.cache
-.DS_Store
-npm-debug.log
-yarn-debug.log
-yarn-error.log
-
-# process data
-.pid
-pids
-.pid-lock
-
-# Coverage & Test
-coverage
-.nyc_output
-
-# Dependency folder
 node_modules
-bower_components
-jspm_packages
+dist
+dist-ssr
+*.local
 
-# Environment files
-.dot
-# Editor and other files
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
 .idea
-typing
-internal
-.vscode
-*.tgz
-.eslintcache
-.svelte-kit
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
