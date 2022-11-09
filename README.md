@@ -1,3 +1,9 @@
+# Vocowl
+
+![Vocowl](./docs/Vocowl%20Header.png "Vocowl")
+
+The idea of Vocowl came about from a simple question, "How do I pick where to eat?" Built using Svelte and utilizing the Google Maps API, Vocowl let's you select nearby restaurants and enter your own favorites then picks one at random. By settling this question, Vocowl is perfect for people who are not vocal or indecisive about their food opinions and pays homage to the wisdom of owls.
+
 # Svelte + TS + Vite
 
 This template should help get you started developing with Svelte and TypeScript in Vite.
@@ -42,6 +48,6 @@ If you have state that's important to retain within a component, consider creati
 ```ts
 // store.ts
 // An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+import { writable } from "svelte/store";
+export default writable(0);
 ```
