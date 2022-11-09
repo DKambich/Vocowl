@@ -26,6 +26,8 @@
 
   // This is reactive destructuring
   const { getStyles } = useStyles();
+
+  darkMode = !darkMode;
 </script>
 
 <Group
@@ -39,8 +41,11 @@
     override={{ d: "block", "@lg": { d: "none" } }}
   />
   <Group>
-    <Vocowl size={36} />
-    <Text size="xl" override={{ d: "none", "@sm": { d: "block" }, color: "White" }}>
+    <Vocowl size={32} />
+    <Text
+      size="xl"
+      override={{ d: "none", "@sm": { d: "block" }, color: "White" }}
+    >
       Vocowl
     </Text>
   </Group>
