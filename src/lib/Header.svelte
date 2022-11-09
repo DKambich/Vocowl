@@ -1,20 +1,19 @@
 <script lang="ts">
   import {
-    Button,
     Navbar,
     NavBrand,
     NavHamburger,
     NavLi,
     NavUl,
   } from "flowbite-svelte";
-  import App from "../App.svelte";
   import { theme, toggleTheme } from "../stores/themeStore";
   import Vocowl from "./Vocowl.svelte";
+  import { Moon, Sun } from "svelte-heros-v2";
+
   let isDarkMode;
 
   theme.subscribe((value) => {
     isDarkMode = value === "dark";
-    console.log(value);
   });
 </script>
 
@@ -35,7 +34,23 @@
     <NavLi href="./about">About</NavLi>
     <NavLi href="./select">Select</NavLi>
     <NavLi on:click={toggleTheme}>
-        Toggle Theme
+      <div class="cursor-pointer">
+        <span class="sm:hidden md:inline">
+          {#if isDarkMode}
+            <Moon size="20" />
+          {:else}
+            <Sun size="20" />
+          {/if}
+        </span>
+        <span class="flex items-center gap-x-2 md:hidden ">
+          Toggle Theme
+          {#if isDarkMode}
+            <Moon size="21" />
+          {:else}
+            <Sun size="21" />
+          {/if}
+        </span>
+      </div>
     </NavLi>
   </NavUl>
 </Navbar>
