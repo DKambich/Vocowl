@@ -1,15 +1,11 @@
 <script lang="ts">
   import {
     AppShell,
-    Aside,
-    Button,
     Footer,
     Header,
     Navbar,
     ShellSection,
     SvelteUIProvider,
-    Text,
-    theme,
   } from "@svelteuidev/core";
   import HeaderContent from "./lib/HeaderContent.svelte";
   let opened = false;
@@ -43,11 +39,12 @@
       Navbar Content
     </Navbar>
 
-    <Header height={60} fixed slot="header"
+    <Header height={64} fixed slot="header"
       ><HeaderContent {opened} {toggleOpened} {darkMode} {toggleTheme} />
     </Header>
     <!-- Main content uses the default slot, so no need to explicitly declare it -->
     <ShellSection grow>Main Content</ShellSection>
+
     <Footer height={60} slot="footer">Footer Content</Footer>
   </AppShell>
 </SvelteUIProvider>
