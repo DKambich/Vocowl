@@ -1,7 +1,9 @@
 import "./app.postcss";
 import "./stores/themeStore";
+import "./stores/googleMapsStore";
 
 import App from "./App.svelte";
+import { map } from "./stores/googleMapsStore";
 
 const app = new App({
   target: document.getElementById("app"),
@@ -18,10 +20,7 @@ declare global {
 
 window.initMap = function ready() {
   app.$set({ googleMapsReady: true });
-  let map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
-    center: { lat: 30, lng: -110 },
-    zoom: 8,
-  });
+  map.set(new google.maps.Map(document.getElementById("map") as HTMLElement));
 };
 
 export default app;

@@ -16,5 +16,4 @@
 
 <Header />
 
-{#if googleMapsReady}{/if}
 <div class="dark:text-white">Hello World</div>
