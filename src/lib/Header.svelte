@@ -35,7 +35,7 @@
   <NavUl {hidden}>
     <NavLi href="./">Home</NavLi>
     <NavLi href="./about">About</NavLi>
-    <NavLi href="./select">Select</NavLi>
+    <NavLi href="./search">Search</NavLi>
     <!-- Theme Toggle Button -->
     <NavLi on:click={toggleTheme}>
       <div class="cursor-pointer flex items-center gap-x-2">

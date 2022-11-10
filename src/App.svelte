@@ -1,6 +1,8 @@
 <script lang="ts">
   import { GOOGLE_MAPS_API_KEY } from "./credentials";
   import Header from "./lib/Header.svelte";
+  import Router from "./lib/Router.svelte";
+  import { routeInfo } from "./routes";
 
   export let googleMapsReady;
 </script>
@@ -14,6 +16,4 @@
   ></script>
 </svelte:head>
 
-<Header />
-
-<div class="dark:text-white">Hello World</div>
+<Router {routeInfo} />
