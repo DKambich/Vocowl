@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Header from "../lib/Header.svelte";
+  import Header from "../components/Header.svelte";
 </script>
 
 <div class="min-h-screen">
