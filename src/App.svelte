@@ -1,8 +1,7 @@
 <script lang="ts">
   import { GOOGLE_MAPS_API_KEY } from "./credentials";
-  import Header from "./lib/Header.svelte";
-  import Router from "./lib/Router.svelte";
-  import { routeInfo } from "./routes";
+  import Router from "svelte-spa-router";
+  import { routes } from "./routes";
 
   export let googleMapsReady;
 </script>
@@ -16,4 +15,4 @@
   ></script>
 </svelte:head>
 
-<Router {routeInfo} />
+<Router {routes} />

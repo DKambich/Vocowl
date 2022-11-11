@@ -24,7 +24,7 @@
 <Navbar let:hidden let:toggle color={isDarkMode ? "dark" : "indigo"}>
   <!-- Vocowl Logo and Title -->
   <NavBrand href="./">
-    <div class="mx-3 dark:text-white">
+    <div class="mr-3 dark:text-white">
       <Vocowl size={28} />
     </div>
     <span class="text-xl font-semibold dark:text-white">Vocowl</span>
@@ -33,9 +33,9 @@
   <NavHamburger on:click={toggle} />
   <!-- List of Navigation Links -->
   <NavUl {hidden}>
-    <NavLi href="./">Home</NavLi>
-    <NavLi href="./about">About</NavLi>
-    <NavLi href="./search">Search</NavLi>
+    <NavLi href="#/">Home</NavLi>
+    <NavLi href="#/about">About</NavLi>
+    <NavLi href="#/search">Search</NavLi>
     <!-- Theme Toggle Button -->
     <NavLi on:click={toggleTheme}>
       <div class="cursor-pointer flex items-center gap-x-2">

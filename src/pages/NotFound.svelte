@@ -3,5 +3,5 @@
 </script>
 
 <PageBaseline>
-  <div class="dark:text-white">About Page</div>
+  <div class="dark:text-white">404 Not Found</div>
 </PageBaseline>
