@@ -34,7 +34,6 @@
     "vite-plugin-mkcert": "^1.10.1"
   },
   "dependencies": {
-    "page": "^1.11.6",
     "svelte-spa-router": "^3.3.0"
   }
 }
