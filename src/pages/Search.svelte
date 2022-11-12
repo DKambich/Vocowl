@@ -1,5 +1,5 @@
 <script lang="ts">
-  import PageBaseline from "./PageBaseline.svelte";
+  import { PageBaseline } from "./";
 </script>
 
 <PageBaseline>

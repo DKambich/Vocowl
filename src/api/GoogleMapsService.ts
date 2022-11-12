@@ -1,4 +1,3 @@
-import { FIVE_MILES, type GoogleMapsDistance } from "../constants";
 import { map } from "../stores/googleMapsStore";
 
 let storedMap: google.maps.Map;
@@ -6,11 +5,11 @@ let storedMap: google.maps.Map;
 map.subscribe((map) => (storedMap = map));
 
 type LocalPlacesRequest = {
-  distance?: GoogleMapsDistance;
+  distance?: number;
   location: google.maps.LatLngLiteral;
 };
 export function getLocalRestaurants({
-  distance = FIVE_MILES,
+  distance = 1000,
   location,
 }: LocalPlacesRequest): Promise<google.maps.places.PlaceResult[]> {
   let service = new google.maps.places.PlacesService(storedMap);

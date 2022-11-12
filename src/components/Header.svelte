@@ -9,16 +9,16 @@
   } from "flowbite-svelte";
   import { Moon, Sun } from "svelte-heros-v2";
   import { location } from "svelte-spa-router";
-  import { ABOUT_ROUTE, HOME_ROUTE, SEARCH_ROUTE } from "../routes";
+  import { ABOUT_ROUTE, HOME_ROUTE, SEARCH_ROUTE } from "../constants";
 
   // Local Imports
   import { theme, toggleTheme } from "../stores/themeStore";
-  import Vocowl from "./Vocowl.svelte";
+  import { Vocowl } from "./";
 
   // Listen for changes in theme to update styles accordingly
   let isDarkMode = false;
   $: isDarkMode = $theme == "dark";
-  
+
   let currentPage = $location;
 </script>
 

@@ -1,11 +1,5 @@
-import About from "./pages/About.svelte";
-import Home from "./pages/Home.svelte";
-import NotFound from "./pages/NotFound.svelte";
-import Search from "./pages/Search.svelte";
-
-const HOME_ROUTE: string = "/",
-  ABOUT_ROUTE: string = "/about/",
-  SEARCH_ROUTE: string = "/search/";
+import { ABOUT_ROUTE, HOME_ROUTE, SEARCH_ROUTE } from "./constants";
+import { About, Home, NotFound, Search } from "./pages";
 
 const routes = {};
 routes[HOME_ROUTE] = Home;
