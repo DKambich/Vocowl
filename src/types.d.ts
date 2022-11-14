@@ -1,4 +1,4 @@
 type Preferences = {
   useDarkTheme: boolean;
-  restaurants;
+  restaurants: [];
 };
