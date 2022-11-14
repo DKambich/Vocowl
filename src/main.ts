@@ -1,5 +1,5 @@
 import "./app.postcss";
-import "./stores/themeStore";
+import "./stores/preferencesStore";
 import "./stores/googleMapsStore";
 
 import App from "./App.svelte";

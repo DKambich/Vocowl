@@ -12,17 +12,17 @@
   import { ABOUT_ROUTE, HOME_ROUTE, SEARCH_ROUTE } from "../constants";
 
   // Local Imports
-  import { theme, toggleTheme } from "../stores/themeStore";
+  import { preferences, toggleTheme } from "../stores/preferencesStore";
   import { Vocowl } from "./";
-
-  // Listen for changes in theme to update styles accordingly
-  let isDarkMode = false;
-  $: isDarkMode = $theme == "dark";
 
   let currentPage = $location;
 </script>
 
-<Navbar let:hidden let:toggle color={isDarkMode ? "dark" : "indigo"}>
+<Navbar
+  let:hidden
+  let:toggle
+  color={$preferences.useDarkTheme ? "dark" : "indigo"}
+>
   <!-- Vocowl Logo and Title -->
   <NavBrand href="./">
     <div class="mr-3 dark:text-white">
@@ -47,7 +47,7 @@
     <NavLi on:click={toggleTheme}>
       <div class="cursor-pointer flex items-center gap-x-2">
         <span class="md:hidden">Toggle Theme</span>
-        {#if isDarkMode}
+        {#if $preferences.useDarkTheme}
           <Moon size="21" />
         {:else}
           <Sun size="21" />
