@@ -1,7 +1,14 @@
 <script lang="ts">
+  import Zipcode from "../components/Zipcode.svelte";
   import { PageBaseline } from "./";
+
+  let userLocation: google.maps.LatLngLiteral;
 </script>
 
 <PageBaseline>
-  <div class="dark:text-white">Search Page</div>
+  <Zipcode bind:userLocation />
+  {#if userLocation}
+    {userLocation.lat}
+    {userLocation.lng}
+  {/if}
 </PageBaseline>
