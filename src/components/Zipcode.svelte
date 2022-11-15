@@ -1,13 +1,16 @@
 <script lang="ts">
   import { Button, ButtonGroup, Helper, Input, Tooltip } from "flowbite-svelte";
   import { MapPin } from "svelte-heros-v2";
+  import { get } from "svelte/store";
   import {
     getLatLngFromZipcode,
     getZipcodeFromLatLng,
   } from "../api/GoogleMapsService";
+  import { cacheLocation, preferences } from "../stores/preferencesStore";
 
   // External LatLng of the user's location
-  export let userLocation: google.maps.LatLngLiteral = null;
+  export let userLocation: google.maps.LatLngLiteral =
+    get(preferences).location.latlng;
 
   // Dictionary of geolocation error messages
   const zipcodeErrors = {
@@ -28,8 +31,8 @@
   };
 
   // Internal state variables
-  let verifiedZipcode = "";
-  let userEnteredZipcode = "";
+  let verifiedZipcode = get(preferences).location.zipcode;
+  let userEnteredZipcode = verifiedZipcode;
   let zipcodeError = zipcodeErrors.NONE;
 
   // Function to geolocate the user's location and zipcode
@@ -59,6 +62,9 @@
                 lat: location.coords.latitude,
                 lng: location.coords.longitude,
               };
+
+              // Cache the location
+              cacheLocation(userLocation, verifiedZipcode);
 
               // Clear zipcode errors
               zipcodeError = zipcodeErrors.NONE;
@@ -128,6 +134,9 @@
           lng: location.lng(),
         };
 
+        // Cache the location
+        cacheLocation(userLocation, verifiedZipcode);
+
         // Clear zipcode errors
         zipcodeError = zipcodeErrors.NONE;
       } else {
@@ -151,7 +160,7 @@
   }
 </script>
 
-<div class="my-4">
+<div class="my-4 mx-2 md:mx-0">
   <ButtonGroup class="w-full">
     <Input
       type="text"
@@ -174,16 +183,14 @@
       {#if zipcodeError !== zipcodeErrors.NONE}
         {zipcodeError}
       {:else if verifiedZipcode}
-        Currently using
-        <u>
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${verifiedZipcode}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {verifiedZipcode}
-          </a>
-        </u>
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${verifiedZipcode}`}
+          target="_blank"
+          rel="noreferrer"
+          class="underline"
+        >
+          Currently using {verifiedZipcode}
+        </a>
       {:else}
         No zipcode is selected
       {/if}

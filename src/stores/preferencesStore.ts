@@ -1,11 +1,33 @@
 import { writable } from "svelte-local-storage-store";
 import { get } from "svelte/store";
+import type { Preferences } from "../types";
 
-// Create default preferences
-export const preferences = writable<Preferences>("preferences", {
+function isPreferences(obj: any): obj is Preferences {
+  return (
+    obj.useDarkTheme !== undefined &&
+    obj.restaurants !== undefined &&
+    obj.location !== undefined
+  );
+}
+
+const defaultPreferences: Preferences = {
   useDarkTheme: window.matchMedia("(prefers-color-scheme: dark)").matches,
   restaurants: [],
-});
+  location: { latlng: null, zipcode: "" },
+};
+
+// Create default preferences
+export const preferences = writable<Preferences>(
+  "preferences",
+  defaultPreferences
+);
+
+if (!isPreferences(get(preferences))) {
+  preferences.update((prefs) => ({
+    ...defaultPreferences,
+    ...prefs,
+  }));
+}
 
 // Set the App theme based on the current preferences
 if (get(preferences).useDarkTheme) {
@@ -33,5 +55,18 @@ export const toggleTheme = () => {
   preferences.update((prefs) => ({
     ...prefs,
     useDarkTheme: !useDarkTheme,
+  }));
+};
+
+export const cacheLocation = (
+  latlng: google.maps.LatLngLiteral,
+  zipcode: string
+) => {
+  preferences.update((prefs) => ({
+    ...prefs,
+    location: {
+      latlng,
+      zipcode,
+    },
   }));
 };
