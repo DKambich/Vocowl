@@ -8,22 +8,15 @@
   export let location: google.maps.LatLngLiteral;
   let nearbyMap: google.maps.Map;
 
-  //
-  onMount(async () => {
-    if (location) {
-      nearbyMap = new google.maps.Map(document.getElementById("nearbyMap"), {
-        center: location,
-        zoom: 12,
-      });
-    }
-  });
-
   afterUpdate(() => {
     if (location && !nearbyMap) {
       nearbyMap = new google.maps.Map(document.getElementById("nearbyMap"), {
         center: location,
         zoom: 12,
       });
+    } else if (location && nearbyMap) {
+      // Move the map camera if location has shifted
+      nearbyMap.moveCamera({ center: location });
     }
   });
 </script>
@@ -33,7 +26,10 @@
     id="nearbyMap"
     class="flex justify-center items-center col-span-1 lg:col-span-2 rounded-lg h-[500px]"
   >
-    <P size="xl">Cannot load map until a location has been provided. Please update your location.</P>
+    <P size="xl"
+      >Cannot load map until a location has been provided. Please update your
+      location.</P
+    >
   </div>
   <Listgroup class="h-fit max-h-[500px] overflow-auto">
     <h3
