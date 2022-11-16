@@ -167,6 +167,7 @@
       placeholder="Enter Zipcode..."
       bind:value={userEnteredZipcode}
       color={zipcodeError === zipcodeErrors.NONE ? "base" : "red"}
+      on:change={verifyandSetManualZipcode}
     />
     <Button on:click={geolocateZipcode} color="alternative">
       <MapPin />
