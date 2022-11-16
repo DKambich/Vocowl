@@ -1,12 +1,7 @@
 import { writable } from "svelte/store";
 import type { ToastOptions } from "../types";
 
-export const toasts = writable<ToastOptions[]>([
-  {
-    message: "test",
-    type: "info",
-  },
-]);
+export const toasts = writable<ToastOptions[]>([]);
 
 export const dismissToast = (id) => {
   toasts.update((all) => all.filter((toast) => toast.id !== id));
