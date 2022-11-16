@@ -1,6 +1,9 @@
 <script lang="ts">
-  import { Listgroup, ListgroupItem, P } from "flowbite-svelte";
-  import { afterUpdate, onMount } from "svelte";
+  import { Button, Listgroup, ListgroupItem, P } from "flowbite-svelte";
+  import { afterUpdate } from "svelte";
+  import { Plus, PlusCircle } from "svelte-heros-v2";
+  import { cacheLocation, preferences } from "../stores/preferencesStore";
+
   let buttons = Array(20)
     .fill(0)
     .map((x, i) => ({ name: i }));
@@ -38,9 +41,19 @@
       Nearby Results
     </h3>
     {#each buttons as button}
-      <ListgroupItem class="text-base font-semibold gap-2">
-        {button.name}
-      </ListgroupItem>
+      <div class="px-2">
+        <ListgroupItem class="flex items-center">
+          <div class="grow wrap pr-2">
+            <div class="font-bold break-all">
+              {button.name.toString().repeat(35)}
+            </div>
+            <div class="font-semibold underline  break-all">
+              123 Apple Street
+            </div>
+          </div>
+          <PlusCircle class="min-w-max" />
+        </ListgroupItem>
+      </div>
     {/each}
     {#if buttons.length === 0}
       <div class="text-center py-4">No Results Found...</div>

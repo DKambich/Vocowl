@@ -1,10 +1,13 @@
 <script lang="ts">
   import { TabItem, Tabs } from "flowbite-svelte";
+  import { get } from "svelte/store";
   import NearbySearch from "../components/NearbySearch.svelte";
   import Zipcode from "../components/Zipcode.svelte";
+  import { preferences } from "../stores/preferencesStore";
   import { PageBaseline } from "./";
 
-  let userLocation: google.maps.LatLngLiteral;
+  let userLocation: google.maps.LatLngLiteral =
+    get(preferences).location.latlng;
 </script>
 
 <PageBaseline>
