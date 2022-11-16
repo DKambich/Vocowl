@@ -10,7 +10,9 @@
 <PageBaseline>
   <Zipcode bind:userLocation />
   <Tabs style="underline">
-    <TabItem open title="Nearby Search"><NearbySearch /></TabItem>
+    <TabItem open title="Nearby Search"
+      ><NearbySearch location={userLocation} /></TabItem
+    >
     <TabItem title="Autocomplete">Autocomplete</TabItem>
   </Tabs>
   {#if userLocation}

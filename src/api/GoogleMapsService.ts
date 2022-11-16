@@ -7,12 +7,14 @@ map.subscribe((map) => (storedMap = map));
 type LocalPlacesRequest = {
   distance?: number;
   location: google.maps.LatLngLiteral;
+  map?: google.maps.Map;
 };
 export function getLocalRestaurants({
   distance = 1000,
   location,
+  map = storedMap,
 }: LocalPlacesRequest): Promise<google.maps.places.PlaceResult[]> {
-  let service = new google.maps.places.PlacesService(storedMap);
+  let service = new google.maps.places.PlacesService(map);
   return new Promise((resolve, reject) => {
     service.nearbySearch(
       {
