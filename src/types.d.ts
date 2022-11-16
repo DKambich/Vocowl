@@ -6,3 +6,11 @@ export type Preferences = {
     zipcode: string;
   };
 };
+
+export type ToastOptions = {
+  id?: string;
+  type: "info" | "warning" | "success" | "error";
+  message: string;
+  dismissible?: boolean;
+  timeout?: number;
+};
