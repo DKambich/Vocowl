@@ -1,30 +1,47 @@
+import { MILES_TO_METERS } from "../constants";
 import { map } from "../stores/googleMapsStore";
 
 let storedMap: google.maps.Map;
 
 map.subscribe((map) => (storedMap = map));
 
-type LocalPlacesRequest = {
-  distance?: number;
+type NearbyPlacesRequest = {
+  callback: (res: NearbyPlacesResponse) => void;
+  radius?: number;
   location: google.maps.LatLngLiteral;
   map?: google.maps.Map;
 };
-export function getLocalRestaurants({
-  distance = 1000,
+type NearbyPlacesResponse = {
+  results: google.maps.places.PlaceResult[];
+  pagination: google.maps.places.PlaceSearchPagination;
+};
+
+export function getNearbyRestaurants({
+  radius = MILES_TO_METERS,
   location,
   map = storedMap,
-}: LocalPlacesRequest): Promise<google.maps.places.PlaceResult[]> {
+  callback,
+}: NearbyPlacesRequest): void {
   let service = new google.maps.places.PlacesService(map);
-  return new Promise((resolve, reject) => {
-    service.nearbySearch(
-      {
-        location: location,
-        radius: distance,
-        type: "restaurant",
-      },
-      (placeResults) => resolve(placeResults)
-    );
-  });
+  service.nearbySearch(
+    {
+      location: location,
+      radius: radius,
+      type: "restaurant",
+    },
+    (results, _, pagination) => callback({ results, pagination })
+  );
+  // return new Promise((resolve, reject) => {
+  //   service.nearbySearch(
+  //     {
+  //       location: location,
+  //       radius: radius,
+  //       type: "restaurant",
+  //     },
+  //     (results, _, pagination) => resolve({ results, pagination })
+  //   );
+  // }
+  // );
 }
 
 export function getZipcodeFromLatLng(

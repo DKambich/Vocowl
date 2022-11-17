@@ -1,8 +1,17 @@
 <script lang="ts">
-  import { Label, Listgroup, ListgroupItem, P, Range } from "flowbite-svelte";
+  import {
+    Button,
+    Label,
+    Listgroup,
+    ListgroupItem,
+    P,
+    Range,
+  } from "flowbite-svelte";
   import { afterUpdate } from "svelte";
-  import { PlusCircle } from "svelte-heros-v2";
+  import { MapPin, PlusCircle } from "svelte-heros-v2";
+  import { getNearbyRestaurants } from "../api/GoogleMapsService";
   import { MILES_TO_METERS } from "../constants";
+  import { showToast } from "../stores/toastStore";
 
   let buttons = Array(20)
     .fill(0)
@@ -12,6 +21,9 @@
   export let location: google.maps.LatLngLiteral;
   // Internal state variables
   let nearbyMap: google.maps.Map;
+  let nearbyRestaurants: google.maps.places.PlaceResult[] = [];
+  let nearbyPagination: google.maps.places.PlaceSearchPagination;
+  let nearbyMarkers: google.maps.Marker[] = [];
   let searchCircle: google.maps.Circle;
   let searchRadius = 5;
 
@@ -43,11 +55,56 @@
         fillColor: "#5850EC",
         fillOpacity: 0.35,
       });
+      nearbyRestaurants = [];
+      getNearbyRestaurants({
+        location,
+        radius: searchRadius * MILES_TO_METERS,
+        map: nearbyMap,
+        callback: (res) => {
+          nearbyRestaurants = [...nearbyRestaurants, ...res.results];
+          nearbyMarkers = [
+            ...nearbyMarkers,
+            ...res.results.map((result) => {
+              const marker = new google.maps.Marker({
+                position: result.geometry.location,
+                map: nearbyMap,
+                title: result.name,
+                clickable: true,
+              });
+
+              return marker;
+            }),
+          ];
+          nearbyPagination = res.pagination;
+          console.log(nearbyMarkers);
+        },
+      });
     }
   });
 
   function updateRadius() {
     // TODO: Set the new locations
+    nearbyRestaurants = [];
+    getNearbyRestaurants({
+      location,
+      radius: searchRadius * MILES_TO_METERS,
+      map: nearbyMap,
+      callback: (res) => {
+        nearbyRestaurants = [...nearbyRestaurants, ...res.results];
+        nearbyPagination = res.pagination;
+      },
+    });
+  }
+
+  function loadPaginatedResults() {
+    if (nearbyPagination) {
+      nearbyPagination.nextPage();
+    }
+  }
+
+  function centerMapOnRestaurant(restaurant: google.maps.places.PlaceResult) {
+    nearbyMap?.setCenter(restaurant.geometry.location);
+    nearbyMap?.setZoom(14);
   }
 
   console.log();
@@ -71,6 +128,7 @@
         max="10"
         bind:value={searchRadius}
         on:change={updateRadius}
+        disabled={!nearbyMap}
       />
     </div>
     <Listgroup class="h-fit overflow-auto grow">
@@ -79,22 +137,30 @@
       >
         Nearby Results
       </h3>
-      {#each buttons as button}
+      {#each nearbyRestaurants as restaurant}
         <div class="px-2">
           <ListgroupItem class="flex items-center">
             <div class="grow wrap pr-2">
               <div class="font-bold break-all">
-                {button.name.toString().repeat(35)}
-              </div>
-              <div class="font-semibold underline  break-all">
-                123 Apple Street
+                {restaurant.name}
               </div>
             </div>
-            <PlusCircle class="min-w-max" />
+            <MapPin
+              class="min-w-max px-2 cursor-pointer hover:text-indigo-500"
+              on:click={() => centerMapOnRestaurant(restaurant)}
+            />
+            <PlusCircle
+              class="min-w-max cursor-pointer hover:text-indigo-500"
+            />
           </ListgroupItem>
         </div>
       {/each}
-      {#if buttons.length === 0}
+      {#if nearbyPagination?.hasNextPage}
+        <Button color="primary" class="w-full" on:click={loadPaginatedResults}
+          >Load More Results</Button
+        >
+      {/if}
+      {#if nearbyRestaurants.length === 0}
         <div class="text-center py-4">No Results Found...</div>
       {/if}
     </Listgroup>
