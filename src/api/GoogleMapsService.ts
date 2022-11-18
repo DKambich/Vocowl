@@ -1,32 +1,26 @@
 import { MILES_TO_METERS } from "../constants";
 import { map } from "../stores/googleMapsStore";
+import type { NearbyPlacesRequest } from "../types";
 
 let storedMap: google.maps.Map;
 
 map.subscribe((map) => (storedMap = map));
 
-type NearbyPlacesRequest = {
-  callback: (res: NearbyPlacesResponse) => void;
-  radius?: number;
-  location: google.maps.LatLngLiteral;
-  map?: google.maps.Map;
-};
-type NearbyPlacesResponse = {
-  results: google.maps.places.PlaceResult[];
-  pagination: google.maps.places.PlaceSearchPagination;
-};
-
 export function getNearbyRestaurants({
-  radius = MILES_TO_METERS,
+  callback,
   location,
   map = storedMap,
-  callback,
+  radius = MILES_TO_METERS,
+  rankBy = 0,
+  openNow = false,
 }: NearbyPlacesRequest): void {
   let service = new google.maps.places.PlacesService(map);
   service.nearbySearch(
     {
       location: location,
       radius: radius,
+      rankBy: rankBy,
+      openNow: openNow,
       type: "restaurant",
     },
     (results, _, pagination) => callback({ results, pagination })
