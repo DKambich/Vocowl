@@ -1,6 +1,12 @@
+export type Restaurant = {
+  id: string;
+  name: string;
+  address: string?;
+};
+
 export type Preferences = {
   useDarkTheme: boolean;
-  restaurants: [];
+  restaurants: Restaurant[];
   location: {
     latlng: google.maps.LatLngLiteral;
     zipcode: string;

@@ -1,12 +1,18 @@
 import { writable } from "svelte-local-storage-store";
 import { get } from "svelte/store";
-import type { Preferences } from "../types";
+import type { Preferences, Restaurant } from "../types";
 
 function isPreferences(obj: any): obj is Preferences {
   return (
     obj.useDarkTheme !== undefined &&
     obj.restaurants !== undefined &&
     obj.location !== undefined
+  );
+}
+
+function isRestaurant(obj: any): obj is Restaurant {
+  return (
+    obj.id !== undefined && obj.name !== undefined && obj.address !== undefined
   );
 }
 
@@ -68,5 +74,27 @@ export const cacheLocation = (
       latlng,
       zipcode,
     },
+  }));
+};
+
+export const addRestaurant = (restaurant: Restaurant) => {
+  preferences.update((prefs) => ({
+    ...prefs,
+    restaurants: [...prefs.restaurants, restaurant],
+  }));
+};
+
+export const removeRestaurant = (restaurant: string | Restaurant) => {
+  let restaurantID: string;
+  if (isRestaurant(restaurant)) {
+    restaurantID = restaurant.id;
+  } else {
+    restaurantID = restaurant;
+  }
+  preferences.update((prefs) => ({
+    ...prefs,
+    restaurants: prefs.restaurants.filter(
+      (restaurant) => restaurant.id !== restaurantID
+    ),
   }));
 };
