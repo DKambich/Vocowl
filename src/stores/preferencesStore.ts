@@ -11,9 +11,7 @@ function isPreferences(obj: any): obj is Preferences {
 }
 
 function isRestaurant(obj: any): obj is Restaurant {
-  return (
-    obj.id !== undefined && obj.name !== undefined && obj.address !== undefined
-  );
+  return obj.id !== undefined && obj.name !== undefined;
 }
 
 const defaultPreferences: Preferences = {

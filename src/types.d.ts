@@ -2,6 +2,7 @@ export type Restaurant = {
   id: string;
   name: string;
   address: string?;
+  location: google.maps.LatLngLiteral?;
 };
 
 export type Preferences = {

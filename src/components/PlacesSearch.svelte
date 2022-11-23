@@ -1,77 +1,90 @@
 <script lang="ts">
+  import { Button, Card, Helper, Search, Spinner } from "flowbite-svelte";
+  import { get } from "svelte/store";
+  import { fade } from "svelte/transition";
   import {
-    Accordion,
-    AccordionItem,
-    Button,
-    Card,
-    Checkbox,
-    Helper,
-    P,
-    Search,
-  } from "flowbite-svelte";
-  import { fade, fly } from "svelte/transition";
+    addRestaurant,
+    preferences,
+    removeRestaurant,
+  } from "../stores/preferencesStore";
+  import { showToast } from "../stores/toastStore";
+  import type { Restaurant } from "../types";
 
   export let location: google.maps.LatLngLiteral;
 
   // TODO: Remove this variable
-  const dummySearchResults = [
+  const dummySearchResults: google.maps.places.PlaceResult[] = [
     {
-      placeID: 0,
+      place_id: "0",
       name: "Lakin Ltd",
-      address: "8858 Bethel Circle, Joseland, MT 07259",
+      formatted_address: "8858 Bethel Circle, Joseland, MT 07259",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 1,
+      place_id: "1",
       name: "Stark and Sons",
-      address: "485 Camille Corner Apt. 264, North Christinebury, WY 56920",
+      formatted_address:
+        "485 Camille Corner Apt. 264, North Christinebury, WY 56920",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 2,
+      place_id: "2",
       name: "Feil LLC",
-      address: "2821 Scarlett Shores, Bayerside, WA 84797-5224",
+      formatted_address: "2821 Scarlett Shores, Bayerside, WA 84797-5224",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 3,
+      place_id: "3",
       name: "Quitzon, Gerhold and Robel",
-      address: "364 O'Connell Unions Apt. 566 Harmonyside, WI 98595",
+      formatted_address: "364 O'Connell Unions Apt. 566 Harmonyside, WI 98595",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 4,
+      place_id: "4",
       name: "Howe Inc",
-      address: "9457 Anissa Mall Suite 331 North Josuechester, WY 40357",
+      formatted_address:
+        "9457 Anissa Mall Suite 331 North Josuechester, WY 40357",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 5,
+      place_id: "5",
       name: "Heller Inc",
-      address: "6457 Mariam Flats Apt. 671 Margiefurt, NM 99341",
+      formatted_address: "6457 Mariam Flats Apt. 671 Margiefurt, NM 99341",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 6,
+      place_id: "6",
       name: "Gutkowski, Romaguera and Doyle",
-      address: "78681 Labadie Fords Lake Nikkiland, CO 26969",
+      formatted_address: "78681 Labadie Fords Lake Nikkiland, CO 26969",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 7,
+      place_id: "7",
       name: "Padberg-Reynolds",
-      address: "982 Hauck Track Suite 331 West Arnaldo, DE 35621",
+      formatted_address: "982 Hauck Track Suite 331 West Arnaldo, DE 35621",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 8,
+      place_id: "8",
       name: "Pfannerstill, Jacobi and Auer",
-      address: "37214 Brooklyn Ridge Rigobertomouth, CA 04574",
+      formatted_address: "37214 Brooklyn Ridge Rigobertomouth, CA 04574",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
     {
-      placeID: 9,
+      place_id: "9",
       name: "Dooley, Runte and Strosin",
-      address: "399 Arch View South Nicholauschester, DC 12369",
+      formatted_address: "399 Arch View South Nicholauschester, DC 12369",
+      geometry: { location: new google.maps.LatLng(0, 0) },
     },
   ];
 
-  let searchResults = [];
+  let searchResults: google.maps.places.PlaceResult[] = [];
   let searchInput = "";
   let searchError = "";
+  let isSearchLoading = false;
 
   $: locationEmpty = !location;
+  $: savedRestaurants = $preferences.restaurants;
 
   // Handle changes to the search
   function onSearchChange(e: Event) {
@@ -83,19 +96,63 @@
   function onSearchSubmit(e: Event) {
     e.preventDefault();
     if (searchInput.trim() !== "") {
-      searchResults = dummySearchResults;
+      isSearchLoading = true;
       searchError = "";
+      setTimeout(() => {
+        searchResults = dummySearchResults;
+        isSearchLoading = false;
+      }, 3000);
     } else {
       searchError = "Search cannot be empty.";
     }
 
     // alert(`You are searching for: ${searchInput}`);
   }
+
+  function addGoogleRestaurant(
+    googleRestaurant: google.maps.places.PlaceResult
+  ) {
+    const {
+      name,
+      formatted_address,
+      place_id,
+      geometry: { location },
+    } = googleRestaurant;
+
+    const restaurant: Restaurant = {
+      id: place_id,
+      name: name,
+      address: formatted_address,
+      location: { lat: location.lat(), lng: location.lng() },
+    };
+
+    addRestaurant(restaurant);
+    showToast({ message: `Added ${name}`, type: "success", timeout: 2000 });
+  }
+
+  function removeGoogleRestaurant(
+    googleRestaurant: google.maps.places.PlaceResult
+  ) {
+    const { name, place_id } = googleRestaurant;
+
+    removeRestaurant(place_id);
+    showToast({ message: `Removed ${name}`, type: "success", timeout: 2000 });
+  }
 </script>
 
 <form class="flex gap-2" on:submit={onSearchSubmit}>
   <Search size="md" on:change={onSearchChange} disabled={locationEmpty} />
-  <Button color="primary" type="submit" disabled={locationEmpty}>Search</Button>
+  <Button
+    color="primary"
+    type="submit"
+    disabled={locationEmpty || isSearchLoading}
+  >
+    {#if isSearchLoading}
+      <Spinner color="white" size="5" />
+    {:else}
+      Search
+    {/if}
+  </Button>
 </form>
 <Helper color="red" class="py-2">
   {#if locationEmpty}
@@ -132,13 +189,29 @@
         <address
           class="font-normal text-gray-700 dark:text-gray-400 leading-tight"
         >
-          {result.address}
+          {result.formatted_address}
         </address>
       </div>
-
-      <Button color="primary" size="sm" class="w-full mt-2"
-        >Add Restaurant</Button
-      >
+      {#if !savedRestaurants.find((restaurant) => restaurant.id === result.place_id)}
+        <Button
+          color="primary"
+          size="sm"
+          class="w-full mt-2"
+          on:click={() => addGoogleRestaurant(result)}
+          disabled={isSearchLoading}
+        >
+          Add Restaurant
+        </Button>{:else}
+        <Button
+          color="red"
+          size="sm"
+          class="w-full mt-2"
+          on:click={() => removeGoogleRestaurant(result)}
+          disabled={isSearchLoading}
+        >
+          Remove Restaurant
+        </Button>
+      {/if}
     </Card>
   {/each}
 </div>
