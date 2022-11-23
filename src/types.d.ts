@@ -22,6 +22,19 @@ export type ToastOptions = {
   timeout?: number;
 };
 
+export type SearchPlacesRequest = {
+  callback: (res: SearchPlacesResponse) => void;
+  query: string;
+  location: google.maps.LatLngLiteral;
+  radius?: number;
+  map?: google.maps.Map;
+};
+
+export type SearchPlacesResponse = {
+  results: google.maps.places.PlaceResult[];
+  status: google.maps.places.PlacesServiceStatus;
+};
+
 export type NearbyPlacesRequest = {
   callback: (res: NearbyPlacesResponse) => void;
   location: google.maps.LatLngLiteral;

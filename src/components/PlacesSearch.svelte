@@ -2,13 +2,15 @@
   import { Button, Card, Helper, Search, Spinner } from "flowbite-svelte";
   import { get } from "svelte/store";
   import { fade } from "svelte/transition";
+  import { queryNearbyRestaurants } from "../api/GoogleMapsService";
+  import { MILES_TO_METERS } from "../constants";
   import {
     addRestaurant,
     preferences,
     removeRestaurant,
   } from "../stores/preferencesStore";
   import { showToast } from "../stores/toastStore";
-  import type { Restaurant } from "../types";
+  import type { Restaurant, SearchPlacesResponse } from "../types";
 
   export let location: google.maps.LatLngLiteral;
 
@@ -98,15 +100,28 @@
     if (searchInput.trim() !== "") {
       isSearchLoading = true;
       searchError = "";
-      setTimeout(() => {
-        searchResults = dummySearchResults;
-        isSearchLoading = false;
-      }, 3000);
+      queryNearbyRestaurants({
+        query: searchInput,
+        location: location,
+        callback: handleSearchResults,
+        radius: MILES_TO_METERS * 10,
+      });
+      // setTimeout(() => {
+      //   searchResults = dummySearchResults;
+      // }, 3000);
     } else {
       searchError = "Search cannot be empty.";
     }
 
     // alert(`You are searching for: ${searchInput}`);
+  }
+
+  function handleSearchResults({ results, status }: SearchPlacesResponse) {
+    console.log(results, status);
+    searchResults = results.filter((result) =>
+      result.types.includes("restaurant")
+    );
+    isSearchLoading = false;
   }
 
   function addGoogleRestaurant(
