@@ -169,7 +169,7 @@
     {/if}
   </Button>
 </form>
-<Helper color="red" class="py-2">
+<Helper color="red" class="my-2">
   {#if locationEmpty}
     <span class="font-semibold" transition:fade={{ duration: 125 }}>
       Cannot search until a location has been provided.

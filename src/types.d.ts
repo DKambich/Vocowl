@@ -48,3 +48,23 @@ export type NearbyPlacesResponse = {
   results: google.maps.places.PlaceResult[];
   pagination: google.maps.places.PlaceSearchPagination;
 };
+
+export type GeographicState = {
+  name: string;
+  abbreviation: string;
+};
+
+export type ManualPlaceFormValues = {
+  restaurant: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+};
+export type ManualPlaceFormErrors = {
+  restaurant?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+};

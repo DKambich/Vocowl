@@ -1,6 +1,7 @@
 <script lang="ts">
   import { TabItem, Tabs } from "flowbite-svelte";
   import { get } from "svelte/store";
+  import ManualPlace from "../components/ManualPlace.svelte";
   import NearbySearch from "../components/NearbySearch.svelte";
   import PlacesSearch from "../components/PlacesSearch.svelte";
   import Zipcode from "../components/Zipcode.svelte";
@@ -20,6 +21,6 @@
     <TabItem title="Nearby Search">
       <NearbySearch location={userLocation} />
     </TabItem>
-    <TabItem title="Custom Place">Custom Search</TabItem>
+    <TabItem title="Custom Place"><ManualPlace /></TabItem>
   </Tabs>
 </PageBaseline>
