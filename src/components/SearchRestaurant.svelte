@@ -204,20 +204,8 @@
     {/if}
   </Button>
 </form>
-<Helper class="my-2 text-red-600 dark:text-red-500">
-  {#if locationEmpty}
-    <a
-      href="/"
-      class="font-bold underline underline-offset-2 cursor-pointer"
-      on:click={(e) => {
-        // TODO: Replace this with show zipcode modal
-        e.preventDefault();
-        alert("Show Location Modal");
-      }}
-      >{$errors.search}
-    </a>{:else}
-    {$errors.search}
-  {/if}
+<Helper class="my-2" color="red">
+  {$errors.search}
 </Helper>
 
 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

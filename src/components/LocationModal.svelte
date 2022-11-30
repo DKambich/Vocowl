@@ -1,5 +1,13 @@
 <script lang="ts">
-  import { Button, ButtonGroup, Helper, Input, Tooltip } from "flowbite-svelte";
+  import {
+    Button,
+    ButtonGroup,
+    Helper,
+    Input,
+    Modal,
+    Spinner,
+    Tooltip,
+  } from "flowbite-svelte";
   import { MapPin } from "svelte-heros-v2";
   import { get } from "svelte/store";
   import {
@@ -9,8 +17,8 @@
   import { cacheLocation, preferences } from "../stores/preferencesStore";
 
   // External LatLng of the user's location
-  export let userLocation: google.maps.LatLngLiteral =
-    get(preferences).location.latlng;
+  let userLocation = $preferences.location.latlng;
+  export let open = false;
 
   // Dictionary of geolocation error messages
   const zipcodeErrors = {
@@ -31,15 +39,20 @@
   };
 
   // Internal state variables
-  let verifiedZipcode = get(preferences).location.zipcode;
+  let verifiedZipcode = $preferences.location.zipcode;
   let userEnteredZipcode = verifiedZipcode;
   let zipcodeError = zipcodeErrors.NONE;
+  let loadingGeolocation = false;
+  let loadingZipcodeVerification = false;
+
+  $: disableFields = loadingGeolocation || loadingZipcodeVerification;
 
   // Function to geolocate the user's location and zipcode
   function geolocateZipcode() {
     // Check if the device has geolocation available
     if (navigator.geolocation) {
       // Get the user's location
+      loadingGeolocation = true;
       navigator.geolocation.getCurrentPosition(
         async (location) => {
           try {
@@ -68,6 +81,7 @@
 
               // Clear zipcode errors
               zipcodeError = zipcodeErrors.NONE;
+              loadingGeolocation = false;
             } else {
               zipcodeError = zipcodeErrors.UNKNOWN;
             }
@@ -88,6 +102,7 @@
           }
         },
         (error) => {
+          loadingGeolocation = false;
           switch (error.code) {
             case GeolocationPositionError.PERMISSION_DENIED:
               zipcodeError = zipcodeErrors.DENIED;
@@ -114,6 +129,8 @@
       zipcodeError = zipcodeError = zipcodeErrors.INVALID;
       return;
     }
+
+    loadingZipcodeVerification = true;
     try {
       // Geocode the user's location  from their zipcode
       const geocodeResults = await (
@@ -139,6 +156,7 @@
 
         // Clear zipcode errors
         zipcodeError = zipcodeErrors.NONE;
+        open = false;
       } else {
         zipcodeError = zipcodeErrors.UNKNOWN;
       }
@@ -156,45 +174,76 @@
           zipcodeError = zipcodeErrors.ERROR;
           break;
       }
+    } finally {
+      loadingZipcodeVerification = false;
     }
   }
 </script>
 
-<div class="my-4 mx-2 md:mx-0">
-  <ButtonGroup class="w-full">
-    <Input
-      type="text"
-      placeholder="Enter Zipcode..."
-      bind:value={userEnteredZipcode}
-      color={zipcodeError === zipcodeErrors.NONE ? "base" : "red"}
-      on:change={verifyandSetManualZipcode}
-    />
-    <Button on:click={geolocateZipcode} color="alternative">
-      <MapPin />
-    </Button>
-    <Tooltip placement="bottom">Use My Location</Tooltip>
-    <Button on:click={verifyandSetManualZipcode} color="primary">Set</Button>
-  </ButtonGroup>
-  <!-- Error or Helper Text -->
-  <Helper
-    class="mt-2"
-    color={zipcodeError === zipcodeErrors.NONE ? "gray" : "red"}
-  >
-    <span class="font-bold">
-      {#if zipcodeError !== zipcodeErrors.NONE}
-        {zipcodeError}
-      {:else if verifiedZipcode}
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${verifiedZipcode}`}
-          target="_blank"
-          rel="noreferrer"
-          class="underline"
-        >
-          Currently using {verifiedZipcode}
-        </a>
+<Modal title="Update Location" bind:open autoclose={false}>
+  <div>
+    <ButtonGroup class="w-full">
+      <Input
+        type="text"
+        placeholder="Enter Zipcode..."
+        bind:value={userEnteredZipcode}
+        color={zipcodeError === zipcodeErrors.NONE ? "base" : "red"}
+        disabled={disableFields}
+      />
+      <Button
+        on:click={geolocateZipcode}
+        color="primary"
+        disabled={disableFields}
+      >
+        {#if loadingGeolocation}
+          <Spinner color="gray" size="6" />
+        {:else}
+          <MapPin />
+        {/if}
+      </Button>
+      <Tooltip placement="bottom">Use My Location</Tooltip>
+    </ButtonGroup>
+    <!-- Error or Helper Text -->
+    <Helper
+      class="mt-2"
+      color={zipcodeError === zipcodeErrors.NONE ? "gray" : "red"}
+    >
+      <span class="font-bold">
+        {#if zipcodeError !== zipcodeErrors.NONE}
+          {zipcodeError}
+        {:else if verifiedZipcode}
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${verifiedZipcode}`}
+            target="_blank"
+            rel="noreferrer"
+            class="underline"
+          >
+            Currently using {verifiedZipcode}
+          </a>
+        {:else}
+          No zipcode is selected
+        {/if}
+      </span>
+    </Helper>
+  </div>
+  <svelte:fragment slot="footer">
+    <Button
+      on:click={verifyandSetManualZipcode}
+      color="primary"
+      disabled={disableFields}
+    >
+      {#if loadingZipcodeVerification}
+        <Spinner color="gray" size="6" />
       {:else}
-        No zipcode is selected
+        Set Location
       {/if}
-    </span>
-  </Helper>
-</div>
+    </Button>
+    <Button
+      on:click={() => (open = false)}
+      color="alternative"
+      disabled={disableFields}
+    >
+      Close
+    </Button>
+  </svelte:fragment>
+</Modal>

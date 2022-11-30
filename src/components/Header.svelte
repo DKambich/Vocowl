@@ -7,9 +7,15 @@
     NavLi,
     NavUl,
   } from "flowbite-svelte";
-  import { Moon, Sun } from "svelte-heros-v2";
+  import {
+    BuildingStorefront,
+    Home,
+    Megaphone,
+    Moon,
+    Sun,
+  } from "svelte-heros-v2";
   import { location } from "svelte-spa-router";
-  import { ABOUT_ROUTE, HOME_ROUTE, SEARCH_ROUTE } from "../constants";
+  import { HOME_ROUTE, RESTAURANT_ROUTE, DECIDE_ROUTE } from "../constants";
 
   // Local Imports
   import { preferences, toggleTheme } from "../stores/preferencesStore";
@@ -34,25 +40,44 @@
   <NavHamburger on:click={toggle} />
   <!-- List of Navigation Links -->
   <NavUl {hidden}>
-    <NavLi href={`#${HOME_ROUTE}`} active={currentPage == HOME_ROUTE}>
+    <NavLi
+      href={`#${HOME_ROUTE}`}
+      active={currentPage == HOME_ROUTE}
+      class="flex flex-row gap-1 items-center"
+    >
+      <Home size="18" />
       Home
     </NavLi>
-    <NavLi href={`#${ABOUT_ROUTE}`} active={currentPage == ABOUT_ROUTE}>
-      About
+    <NavLi
+      href={`#${RESTAURANT_ROUTE}`}
+      active={currentPage == RESTAURANT_ROUTE}
+      class="flex flex-row gap-1 items-center"
+    >
+      <BuildingStorefront size="18" />
+      Restaurants
     </NavLi>
-    <NavLi href={`#${SEARCH_ROUTE}`} active={currentPage == SEARCH_ROUTE}>
-      Search
+    <NavLi
+      href={`#${DECIDE_ROUTE}`}
+      active={currentPage == DECIDE_ROUTE}
+      class="flex flex-row gap-1 items-center"
+    >
+      <Megaphone size="18" />
+      Decide
     </NavLi>
+
     <!-- Theme Toggle Button -->
-    <NavLi on:click={toggleTheme}>
-      <div class="cursor-pointer flex items-center gap-x-2">
-        <span class="md:hidden">Toggle Theme</span>
-        {#if $preferences.useDarkTheme}
-          <Moon size="21" />
-        {:else}
-          <Sun size="21" />
-        {/if}
-      </div>
+    <NavLi
+      on:click={toggleTheme}
+      class="cursor-pointer flex flex-row gap-1 items-center"
+    >
+      {#if $preferences.useDarkTheme}
+        <Moon size="18" class="md:hidden" />
+        <Moon size="21" class="hidden md:block" />
+      {:else}
+        <Sun size="18" class="md:hidden" />
+        <Sun size="21" class="hidden md:block" />
+      {/if}
+      <span class="md:hidden">Toggle Theme</span>
     </NavLi>
   </NavUl>
 </Navbar>

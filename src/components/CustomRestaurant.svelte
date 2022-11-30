@@ -83,7 +83,7 @@
     formValues.address2 = "";
     formValues.city = "";
     formValues.state = "";
-    state
+    state;
 
     addRestaurant(manualRestaurant);
     showToast({
@@ -108,7 +108,7 @@
       on:change={handleChange}
     />
     {#if $errors.restaurant}
-      <Helper class="mt-2 text-red-600 dark:text-red-500">
+      <Helper class="mt-2" color="red">
         {$errors.restaurant}
       </Helper>
     {/if}
@@ -132,7 +132,7 @@
           on:change={handleChange}
         />
         {#if $errors.address1}
-          <Helper class="mt-2 text-red-600 dark:text-red-500">
+          <Helper class="mt-2" color="red">
             {$errors.address1}
           </Helper>
         {/if}
@@ -159,7 +159,7 @@
           on:change={handleChange}
         />
         {#if $errors.city}
-          <Helper class="mt-2 text-red-600 dark:text-red-500">
+          <Helper class="mt-2" color="red">
             {$errors.city}
           </Helper>
         {/if}
@@ -177,7 +177,7 @@
           on:change={handleChange}
         />
         {#if $errors.state}
-          <Helper class="mt-2 text-red-600 dark:text-red-500">
+          <Helper class="mt-2" color="red">
             {$errors.state}
           </Helper>
         {/if}
@@ -185,5 +185,5 @@
     </div>
   {/if}
 
-  <Button type="submit" class="w-full md:w-max">Add Place</Button>
+  <Button type="submit" color="primary" class="w-full md:w-max">Add Restaurant</Button>
 </form>

@@ -1,10 +1,10 @@
-import { ABOUT_ROUTE, HOME_ROUTE, SEARCH_ROUTE } from "./constants";
-import { About, Home, NotFound, Search } from "./pages";
+import { HOME_ROUTE, RESTAURANT_ROUTE, DECIDE_ROUTE } from "./constants";
+import { Home, NotFound, Restaurant, Decide } from "./pages";
 
 const routes = {};
+routes[DECIDE_ROUTE] = Decide;
 routes[HOME_ROUTE] = Home;
-routes[ABOUT_ROUTE] = About;
-routes[SEARCH_ROUTE] = Search;
+routes[RESTAURANT_ROUTE] = Restaurant;
 routes["*"] = NotFound;
 
-export { routes, HOME_ROUTE, ABOUT_ROUTE, SEARCH_ROUTE };
+export { routes, HOME_ROUTE, RESTAURANT_ROUTE, DECIDE_ROUTE };
