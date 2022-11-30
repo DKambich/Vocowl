@@ -10,7 +10,14 @@
   import { createForm } from "svelte-forms-lib";
   import { fade } from "svelte/transition";
   import { US_STATES } from "../constants";
-  import type { ManualPlaceFormErrors, ManualPlaceFormValues } from "../types";
+  import { addRestaurant } from "../stores/preferencesStore";
+  import { showToast } from "../stores/toastStore";
+  import type {
+    ManualPlaceFormErrors,
+    ManualPlaceFormValues,
+    Restaurant,
+  } from "../types";
+  import { GUID } from "../utilities";
 
   const states = US_STATES.map((state) => ({
     value: state.abbreviation,
@@ -26,7 +33,7 @@
     state: "",
   };
 
-  const { errors, handleChange, handleSubmit } = createForm({
+  const { errors, handleReset, handleChange, handleSubmit } = createForm({
     initialValues: formValues,
     validate: validateForm,
     onSubmit: submitForm,
@@ -58,8 +65,32 @@
     $errors.state = "";
   }
 
-  function submitForm(values) {
-    console.log(values);
+  function submitForm({
+    restaurant,
+    address1,
+    address2,
+    city,
+    state,
+  }: ManualPlaceFormValues) {
+    const manualRestaurant: Restaurant = {
+      name: restaurant,
+      address: `${address1} ${address2}, ${city}, ${state}`,
+      id: GUID(),
+    };
+    console.log(manualRestaurant);
+    formValues.restaurant = "";
+    formValues.address1 = "";
+    formValues.address2 = "";
+    formValues.city = "";
+    formValues.state = "";
+    state
+
+    addRestaurant(manualRestaurant);
+    showToast({
+      message: `Added ${restaurant}`,
+      type: "success",
+      timeout: 2000,
+    });
   }
 </script>
 
