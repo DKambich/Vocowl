@@ -1,5 +1,14 @@
 <script lang="ts">
-  import { Button, Card, Helper, Search, Spinner } from "flowbite-svelte";
+  import {
+    Button,
+    Card,
+    Helper,
+    Input,
+    Search,
+    Spinner,
+  } from "flowbite-svelte";
+  import { createForm } from "svelte-forms-lib";
+  import { MagnifyingGlass } from "svelte-heros-v2";
   import { get } from "svelte/store";
   import { fade } from "svelte/transition";
   import { queryNearbyRestaurants } from "../api/GoogleMapsService";
@@ -10,7 +19,12 @@
     removeRestaurant,
   } from "../stores/preferencesStore";
   import { showToast } from "../stores/toastStore";
-  import type { Restaurant, SearchPlacesResponse } from "../types";
+  import type {
+    PlacesSearchFormErrors,
+    PlacesSearchFormValues,
+    Restaurant,
+    SearchPlacesResponse,
+  } from "../types";
 
   export let location: google.maps.LatLngLiteral;
 
@@ -81,46 +95,58 @@
   ];
 
   let searchResults: google.maps.places.PlaceResult[] = [];
-  let searchInput = "";
-  let searchError = "";
   let isSearchLoading = false;
-
   $: locationEmpty = !location;
+
   $: savedRestaurants = $preferences.restaurants;
 
-  // Handle changes to the search
-  function onSearchChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    searchInput = target.value;
+  const formValues: PlacesSearchFormValues = {
+    search: "",
+  };
+
+  const { errors, handleChange, handleSubmit } = createForm({
+    initialValues: formValues,
+    validate: validateForm,
+    onSubmit: submitForm,
+  });
+
+  $: if (locationEmpty) {
+    $errors.search =
+      "Cannot search until a location has been provided. Please update your location.";
+  } else {
+    $errors.search = "";
   }
 
-  // Handle submission of the search
-  function onSearchSubmit(e: Event) {
-    e.preventDefault();
-    if (searchInput.trim() !== "") {
-      isSearchLoading = true;
-      searchError = "";
-      queryNearbyRestaurants({
-        query: searchInput,
-        location: location,
-        callback: handleSearchResults,
-        radius: MILES_TO_METERS * 10,
-      });
-      // setTimeout(() => {
-      //   searchResults = dummySearchResults;
-      // }, 3000);
-    } else {
-      searchError = "Search cannot be empty.";
+  function validateForm(values: PlacesSearchFormValues) {
+    let errors: PlacesSearchFormErrors = {};
+    if (values.search.trim() === "") {
+      errors.search = "Search cannot be empty";
     }
+    return errors;
+  }
 
-    // alert(`You are searching for: ${searchInput}`);
+  function submitForm({ search }: PlacesSearchFormValues) {
+    isSearchLoading = true;
+    queryNearbyRestaurants({
+      query: search,
+      location: location,
+      callback: handleSearchResults,
+      radius: MILES_TO_METERS * 10,
+    });
   }
 
   function handleSearchResults({ results, status }: SearchPlacesResponse) {
-    console.log(results, status);
-    searchResults = results.filter((result) =>
-      result.types.includes("restaurant")
-    );
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      searchResults = results.filter((result) =>
+        result.types.includes("restaurant")
+      );
+    } else {
+      showToast({
+        message: "There was an error. Please try again",
+        type: "error",
+        timeout: 3000,
+      });
+    }
     isSearchLoading = false;
   }
 
@@ -155,8 +181,17 @@
   }
 </script>
 
-<form class="flex gap-2" on:submit={onSearchSubmit}>
-  <Search size="md" on:change={onSearchChange} disabled={locationEmpty} />
+<form class="flex gap-2" on:submit={handleSubmit}>
+  <Input
+    name="search"
+    placeholder="Search"
+    size="md"
+    on:change={handleChange}
+    disabled={locationEmpty}
+    bind:value={formValues.search}
+  >
+    <MagnifyingGlass slot="left" size="20" />
+  </Input>
   <Button
     color="primary"
     type="submit"
@@ -169,26 +204,19 @@
     {/if}
   </Button>
 </form>
-<Helper color="red" class="my-2">
+<Helper class="my-2 text-red-600 dark:text-red-500">
   {#if locationEmpty}
-    <span class="font-semibold" transition:fade={{ duration: 125 }}>
-      Cannot search until a location has been provided.
-      <a
-        href="/"
-        class="font-bold underline underline-offset-2 cursor-pointer"
-        on:click={(e) => {
-          // TODO: Replace this with show zipcode modal
-          e.preventDefault();
-          alert("Show Location Modal");
-        }}
-      >
-        Please update your location.
-      </a>
-    </span>
-  {:else if searchError}
-    <span class="font-semibold" transition:fade={{ duration: 125 }}>
-      {searchError}
-    </span>
+    <a
+      href="/"
+      class="font-bold underline underline-offset-2 cursor-pointer"
+      on:click={(e) => {
+        // TODO: Replace this with show zipcode modal
+        e.preventDefault();
+        alert("Show Location Modal");
+      }}
+      >{$errors.search}
+    </a>{:else}
+    {$errors.search}
   {/if}
 </Helper>
 

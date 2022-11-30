@@ -54,6 +54,14 @@ export type GeographicState = {
   abbreviation: string;
 };
 
+export type PlacesSearchFormValues = {
+  search: string;
+};
+
+export type PlacesSearchFormErrors = {
+  search?: string;
+};
+
 export type ManualPlaceFormValues = {
   restaurant: string;
   address1: string;
@@ -61,6 +69,7 @@ export type ManualPlaceFormValues = {
   city: string;
   state: string;
 };
+
 export type ManualPlaceFormErrors = {
   restaurant?: string;
   address1?: string;

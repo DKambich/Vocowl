@@ -26,23 +26,11 @@
     state: "",
   };
 
-  const { form, errors, state, handleChange, handleSubmit } = createForm({
+  const { errors, handleChange, handleSubmit } = createForm({
     initialValues: formValues,
     validate: validateForm,
     onSubmit: submitForm,
   });
-
-  $: {
-    console.log(
-      formValues.restaurant,
-      formValues.address1,
-      formValues.address2,
-      formValues.city,
-      formValues.state
-    );
-  }
-
-  // let errors: { [inputName: string]: any } = {};
 
   function validateForm(values: ManualPlaceFormValues) {
     let errors: ManualPlaceFormErrors = {};
@@ -78,7 +66,7 @@
 <form on:submit|preventDefault={handleSubmit}>
   <div class="mb-6">
     <Label for="restaurant" class="mb-2">
-      Restaurant <span class="text-red-700 font-bold">*</span>
+      Restaurant <span class="text-red-600 font-bold">*</span>
     </Label>
     <Input
       type="text"
@@ -89,7 +77,9 @@
       on:change={handleChange}
     />
     {#if $errors.restaurant}
-      <Helper class="mt-2" color="red">{$errors.restaurant}</Helper>
+      <Helper class="mt-2 text-red-600 dark:text-red-500">
+        {$errors.restaurant}
+      </Helper>
     {/if}
   </div>
   <div class="mb-6">
@@ -101,7 +91,7 @@
     <div class="grid gap-6 mb-6 md:grid-cols-2" transition:fade>
       <div>
         <Label for="address1" class="mb-2">
-          Address Line 1 <span class="text-red-700 font-bold">*</span>
+          Address Line 1 <span class="text-red-600 font-bold">*</span>
         </Label>
         <Input
           type="text"
@@ -111,7 +101,9 @@
           on:change={handleChange}
         />
         {#if $errors.address1}
-          <Helper class="mt-2" color="red">{$errors.address1}</Helper>
+          <Helper class="mt-2 text-red-600 dark:text-red-500">
+            {$errors.address1}
+          </Helper>
         {/if}
       </div>
       <div>
@@ -126,7 +118,7 @@
       </div>
       <div>
         <Label for="city" class="mb-2">
-          City <span class="text-red-700 font-bold">*</span>
+          City <span class="text-red-600 font-bold">*</span>
         </Label>
         <Input
           type="text"
@@ -136,12 +128,14 @@
           on:change={handleChange}
         />
         {#if $errors.city}
-          <Helper class="mt-2" color="red">{$errors.city}</Helper>
+          <Helper class="mt-2 text-red-600 dark:text-red-500">
+            {$errors.city}
+          </Helper>
         {/if}
       </div>
       <div>
         <Label for="state" class="mb-2">
-          State <span class="text-red-700 font-bold">*</span>
+          State <span class="text-red-600 font-bold">*</span>
         </Label>
         <Select
           name="state"
@@ -152,7 +146,9 @@
           on:change={handleChange}
         />
         {#if $errors.state}
-          <Helper class="mt-2" color="red">{$errors.state}</Helper>
+          <Helper class="mt-2 text-red-600 dark:text-red-500">
+            {$errors.state}
+          </Helper>
         {/if}
       </div>
     </div>
