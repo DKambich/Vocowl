@@ -43,7 +43,7 @@
     <NavLi
       href={`#${HOME_ROUTE}`}
       active={currentPage == HOME_ROUTE}
-      class="flex flex-row gap-1 items-center"
+      class="flex flex-row gap-2 items-center"
     >
       <Home size="18" />
       Home
@@ -51,7 +51,7 @@
     <NavLi
       href={`#${RESTAURANT_ROUTE}`}
       active={currentPage == RESTAURANT_ROUTE}
-      class="flex flex-row gap-1 items-center"
+      class="flex flex-row gap-2 items-center"
     >
       <BuildingStorefront size="18" />
       Restaurants
@@ -59,7 +59,7 @@
     <NavLi
       href={`#${DECIDE_ROUTE}`}
       active={currentPage == DECIDE_ROUTE}
-      class="flex flex-row gap-1 items-center"
+      class="flex flex-row gap-2 items-center"
     >
       <Megaphone size="18" />
       Decide
@@ -68,7 +68,7 @@
     <!-- Theme Toggle Button -->
     <NavLi
       on:click={toggleTheme}
-      class="cursor-pointer flex flex-row gap-1 items-center"
+      class="cursor-pointer flex flex-row gap-2 items-center"
     >
       {#if $preferences.useDarkTheme}
         <Moon size="18" class="md:hidden" />
