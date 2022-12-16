@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Vocowl } from "../components";
+  import { Vocowl } from "../../components";
 </script>
 
 <div

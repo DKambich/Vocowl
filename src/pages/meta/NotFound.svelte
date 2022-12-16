@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PageBaseline } from "./";
+  import { PageBaseline } from "..";
 </script>
 
 <PageBaseline>

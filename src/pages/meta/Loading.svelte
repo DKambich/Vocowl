@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Spinner } from "flowbite-svelte";
-  import { Vocowl } from "../components";
+  import { Vocowl } from "../../components";
 </script>
 
 <div
