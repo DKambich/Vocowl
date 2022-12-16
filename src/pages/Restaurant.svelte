@@ -14,6 +14,7 @@
     Map,
     PencilSquare,
   } from "svelte-heros-v2";
+  import RestaurantList from "../components/RestaurantList.svelte";
 
   $: userLocation = $preferences.location.latlng;
   $: userZipcode = $preferences.location.zipcode;
@@ -79,8 +80,8 @@
         <ListBullet size="18" />
         <span class="hidden sm:block">Manage</span>
       </div>
-      This is the Restaurant Manager list
+      <RestaurantList />
     </TabItem>
-    <Tooltip class="sm:hidden" placement="bottom">Manage Restaurants</Tooltip>
+    <Tooltip class=" sm:hidden" placement="bottom">Manage Restaurants</Tooltip>
   </Tabs>
 </PageBaseline>

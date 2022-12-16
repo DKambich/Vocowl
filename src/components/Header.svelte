@@ -15,7 +15,13 @@
     Sun,
   } from "svelte-heros-v2";
   import { location } from "svelte-spa-router";
-  import { HOME_ROUTE, RESTAURANT_ROUTE, DECIDE_ROUTE } from "../constants";
+  import {
+    HOME_ROUTE,
+    RESTAURANT_ROUTE,
+    DECIDE_ROUTE,
+    NAVLI_INACTIVE_CLASS,
+    NAVLI_ACTIVE_CLASS,
+  } from "../constants";
 
   // Local Imports
   import { preferences, toggleTheme } from "../stores/preferencesStore";
@@ -44,6 +50,8 @@
       href={`#${HOME_ROUTE}`}
       active={currentPage == HOME_ROUTE}
       class="flex flex-row gap-2 items-center"
+      activeClass={NAVLI_ACTIVE_CLASS}
+      nonActiveClass={NAVLI_INACTIVE_CLASS}
     >
       <Home size="18" />
       Home
@@ -52,6 +60,8 @@
       href={`#${RESTAURANT_ROUTE}`}
       active={currentPage == RESTAURANT_ROUTE}
       class="flex flex-row gap-2 items-center"
+      activeClass={NAVLI_ACTIVE_CLASS}
+      nonActiveClass={NAVLI_INACTIVE_CLASS}
     >
       <BuildingStorefront size="18" />
       Restaurants
@@ -60,6 +70,8 @@
       href={`#${DECIDE_ROUTE}`}
       active={currentPage == DECIDE_ROUTE}
       class="flex flex-row gap-2 items-center"
+      activeClass={NAVLI_ACTIVE_CLASS}
+      nonActiveClass={NAVLI_INACTIVE_CLASS}
     >
       <Megaphone size="18" />
       Decide
@@ -69,6 +81,8 @@
     <NavLi
       on:click={toggleTheme}
       class="cursor-pointer flex flex-row gap-2 items-center"
+      activeClass={NAVLI_ACTIVE_CLASS}
+      nonActiveClass={NAVLI_INACTIVE_CLASS}
     >
       {#if $preferences.useDarkTheme}
         <Moon size="18" class="md:hidden" />

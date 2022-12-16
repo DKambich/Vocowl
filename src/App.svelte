@@ -7,7 +7,7 @@
 </script>
 
 <ResourceLoader>
-  <Loading slot="loading"  />
+  <Loading slot="loading" />
   <Router slot="success" {routes} />
   <Error slot="failure" />
 </ResourceLoader>
