@@ -1,29 +1,39 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { createEventDispatcher } from "svelte";
 
   type T = $$Generic;
   interface $$Events {
     reelEnd: CustomEvent<T>;
   }
 
-  export let options: T[] = [];
-  export let optionBuilder: (reelItem: T) => String = (reelItem) =>
-    `${reelItem}`;
-  export const startReel = spinReel;
+  interface SlotOptions {
+    animationLength: number;
+    maxReelItems: number;
+  }
+
+  const defaultSlotOptions: SlotOptions = {
+    animationLength: 5000,
+    maxReelItems: 40,
+  };
+
+  // Props
+  export let slotOptions = defaultSlotOptions;
+  export let reelItems: T[] = [];
+  export let reelItemBuilder = (reelItem: T) => `${reelItem}`;
   export let onReelEnd = (_: T) => {};
+  export const startReel = spinReel;
 
-  const dispatch = createEventDispatcher();
-
+  // Local variables
   let slotRef: HTMLElement;
-  const REEL_LENGTH = 30;
-  let slotOptions: T[] = [];
+  let finalReelItems: T[] = [];
   let isSpinning = false;
   let hasSpun = false;
+  let itemHeight = 0;
 
   onMount(() => {
     slotRef = document.getElementById("slot");
-    initializeSlot(slotRef, options);
+    itemHeight = slotRef.clientHeight / 3;
+    initializeSlot(slotRef, reelItems);
   });
 
   function shuffleArray(a: any[]) {
@@ -42,18 +52,13 @@
     slotRef.style.top = `${0}px`;
 
     // Shuffle initial items
-    slotOptions = shuffleArray([...options]);
+    finalReelItems = shuffleArray([...options]);
 
-    // Select the first MIN_SLOT_LENGTH elements
-    if (slotOptions.length > REEL_LENGTH) {
-      slotOptions = slotOptions.slice(0, REEL_LENGTH);
+    // Add to finalReelItems until it has maxReelItems
+    while (finalReelItems.length < slotOptions.maxReelItems) {
+      finalReelItems = [...finalReelItems, ...finalReelItems];
     }
-
-    // Populate slotOptions with random options up to MIN_SLOT_LENGTH items
-    while (slotOptions.length < REEL_LENGTH) {
-      const randomIndex = Math.floor(Math.random() * options.length);
-      slotOptions.push(options[randomIndex]);
-    }
+    finalReelItems = finalReelItems.slice(0, slotOptions.maxReelItems);
   }
 
   function spinReel() {
@@ -62,20 +67,20 @@
     isSpinning = true;
 
     // Re-initialize slot if it has been spun
-    if (hasSpun) initializeSlot(slotRef, options);
+    if (hasSpun) initializeSlot(slotRef, reelItems);
 
     let winningReelItem = slotRef.children[
-      slotOptions.length - 3
+      finalReelItems.length - 3
     ] as HTMLElement;
 
-    let winningItem = slotOptions[slotOptions.length - 2];
+    let winningItem = finalReelItems[finalReelItems.length - 2];
 
     const offsetAmount = `${-winningReelItem.offsetTop}px`;
 
     const reelAnimation = slotRef.animate(
       { transform: `translate(0, ${offsetAmount})` },
       {
-        duration: 4000,
+        duration: slotOptions.animationLength,
         iterations: 1,
         easing: "ease-in-out",
       }
@@ -85,47 +90,28 @@
       slotRef.style.top = offsetAmount;
       hasSpun = true;
       isSpinning = false;
-
       onReelEnd(winningItem);
     });
   }
 </script>
 
-<div class="slotCtr">
-  <div class="slot">
-    <div id="slot" class="slotInner">
-      {#each slotOptions as option}
-        <div class="option">
-          {optionBuilder(option)}
-        </div>
-      {/each}
-    </div>
+<div
+  class="relative h-full w-full overflow-hidden rounded-lg shadow-inner shadow-black dark:shadow-slate-400"
+>
+  <div
+    class="top-1/2 -translate-y-[7.5px] absolute left-0 w-0 h-0 border-l-[25px] border-primary-700 border-y-[15px] border-y-transparent z-50"
+  />
+  <div
+    class="top-1/2 -translate-y-[7.5px] absolute right-0 w-0 h-0 border-r-[25px] border-primary-700 border-y-[15px] border-y-transparent z-50"
+  />
+  <div id="slot" class="w-full h-full absolute text-center">
+    {#each finalReelItems as option}
+      <div
+        class="flex justify-center items-center overflow-hidden text-ellipsis dark:text-white border-t border-black dark:border-slate-600"
+        style={`height: ${itemHeight}px; font-size: 25px`}
+      >
+        {reelItemBuilder(option)}
+      </div>
+    {/each}
   </div>
 </div>
-
-<style>
-  .slotCtr {
-    position: relative;
-    overflow: hidden;
-    height: 600px;
-    width: 100%;
-    box-shadow: inset 0 35px 45px -35px rgba(0, 0, 0, 0.7),
-      inset 0 -35px 45px -35px rgba(0, 0, 0, 0.7);
-    border-radius: 25px;
-  }
-
-  .slotInner {
-    height: 100%;
-    position: absolute;
-    text-align: center;
-    width: 100%;
-  }
-  .option {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px;
-    height: 200px;
-    border-top: 1px rgba(0, 0, 0, 0.2) solid;
-  }
-</style>

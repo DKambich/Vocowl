@@ -7,28 +7,32 @@
   let restaurants = $preferences.restaurants;
 
   let startReel;
-  function onReelEnd(test: Restaurant) {
-    console.log("ENDED:", test);
+  function onReelEnd(res: Restaurant) {
+    alert(`${res.name} Won!!!`);
   }
 </script>
 
 <PageBaseline>
-  <div class="flex flex-col justify-center items-center">
-    <div class="dark:text-white">Decide Page</div>
-    <Slot
-      options={restaurants}
-      optionBuilder={(res) => res.name}
-      {onReelEnd}
-      bind:startReel
-    />
-    <!-- {#each restaurants as restaurant}
-      {restaurant.name}<br />
-    {/each} -->
-    <Button
-      color="primary"
-      size="xl"
-      class="w-full md:w-auto"
-      on:click={startReel}>Spin</Button
-    >
+  <div
+    class="grid lg:grid-cols-5 gap-4 mt-4 mx-4 md:mx-0 h-[90vh] lg:h-[50vh]"
+  >
+    <div class="col-span-3 flex flex-col gap-2">
+      <Slot
+        reelItems={restaurants}
+        reelItemBuilder={(res) => res.name}
+        {onReelEnd}
+        bind:startReel
+      />
+      <div class="flex-none">
+        <Button color="primary" size="xl" class="w-full" on:click={startReel}
+          >Spin</Button
+        >
+      </div>
+    </div>
+    <div>
+      {#each restaurants as restaurant}
+        {restaurant.name}<br />
+      {/each}
+    </div>
   </div>
 </PageBaseline>
