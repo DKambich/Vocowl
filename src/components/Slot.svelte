@@ -81,8 +81,8 @@
       { transform: `translate(0, ${offsetAmount})` },
       {
         duration: slotOptions.animationLength,
-        iterations: 1,
         easing: "ease-in-out",
+        iterations: 1,
       }
     );
 
@@ -93,8 +93,13 @@
       onReelEnd(winningItem);
     });
   }
+
+  function resize() {
+    itemHeight = slotRef.clientHeight / 3;
+  }
 </script>
 
+<svelte:window on:resize={resize} />
 <div
   class="relative h-full w-full overflow-hidden rounded-lg shadow-inner shadow-black dark:shadow-slate-400"
 >
@@ -107,8 +112,8 @@
   <div id="slot" class="w-full h-full absolute text-center">
     {#each finalReelItems as option}
       <div
-        class="flex justify-center items-center overflow-hidden text-ellipsis dark:text-white border-t border-black dark:border-slate-600"
-        style={`height: ${itemHeight}px; font-size: 25px`}
+        class="text-xl md:text-2xl  xl:text-3xl flex justify-center items-center overflow-hidden text-ellipsis dark:text-white border-t border-black dark:border-slate-600"
+        style={`height: ${itemHeight}px; `}
       >
         {reelItemBuilder(option)}
       </div>

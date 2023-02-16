@@ -1,10 +1,10 @@
 <script lang="ts">
   import { Button, Card } from "flowbite-svelte";
   import { MapPin, Trash } from "svelte-heros-v2";
-  import { preferences } from "../stores/preferencesStore";
+  import { preferences, removeRestaurant } from "../stores/preferencesStore";
   import type { Restaurant } from "../types";
 
-  let restaurants = $preferences.restaurants;
+  $: restaurants = $preferences.restaurants;
 
   function generateGoogleMapsURL(restaurant: Restaurant) {
     let url = "https://www.google.com/maps/search/?api=1";
@@ -35,7 +35,7 @@
           <MapPin size="20" />
           <span class="ml-2 font-bold">Locate</span>
         </Button>
-        <Button color="red"
+        <Button color="red" on:click={() => removeRestaurant(restaurant)}
           ><Trash size="20" /><span class="ml-2 font-bold">Remove</span></Button
         >
       </div>
