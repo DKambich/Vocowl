@@ -118,8 +118,8 @@
   >
     <P size="xl"
       >Cannot load map until a location has been provided. Please update your
-      location.</P
-    >
+      location.
+    </P>
   </div>
   <div class="flex flex-col max-h-[500px] ">
     <Listgroup class="h-fit overflow-auto grow">
