@@ -12,12 +12,16 @@
     restaurant,
   }));
 
-  let filteredRestaurants = restaurantOptions
-    .filter((option) => option.selected)
-    .map((option) => option.restaurant);
+  console.log(restaurantOptions);
+
+  let filteredRestaurants;
+  $: {
+    filteredRestaurants = restaurantOptions
+      .filter((option) => option.selected)
+      .map((option) => option.restaurant);
+  }
 
   let startReel;
-  let updateReelOptions;
 
   function onReelEnd(res: Restaurant) {
     alert(`${res.name} Won!!!`);
@@ -39,30 +43,24 @@
       });
       return;
     }
-  }
 
-  function onCheckboxChange(event: Event, index: number) {
-    const checked = (event.target as HTMLInputElement).checked;
-
-    restaurantOptions[index].selected = checked;
-    updateReelOptions(
-      restaurantOptions
-        .filter((option) => option.selected)
-        .map((option) => option.restaurant)
-    );
+    restaurantOptions[index].selected = !checked;
+    restaurantOptions = restaurantOptions;
   }
 </script>
 
 <PageBaseline>
   <div class="flex-1 grid grid-rows-2 grid-cols-1 lg:grid-cols-5 gap-4">
     <div class="col-span-3 flex flex-col gap-2">
-      <Slot
-        reelItems={filteredRestaurants}
-        reelItemBuilder={(res) => res.name}
-        {onReelEnd}
-        bind:startReel
-        bind:updateReelOptions
-      />
+      {#key filteredRestaurants}
+        <Slot
+          reelItems={filteredRestaurants}
+          reelItemBuilder={(res) => res.name}
+          {onReelEnd}
+          bind:startReel
+        />
+      {/key}
+
       <div class="flex-none">
         <Button color="primary" size="xl" class="w-full" on:click={startReel}>
           Spin
@@ -78,10 +76,10 @@
         </div>
         {#each restaurantOptions as option, index}
           <ListgroupItem>
+            <input type="checkbox" checked />
             <Checkbox
               checked={option.selected}
               class="w-100"
-              on:change={(event) => onCheckboxChange(event, index)}
               on:click={(event) => onCheckboxClick(event, index)}
             >
               {option.restaurant.name}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Popover, TabItem, Tabs, Tooltip } from "flowbite-svelte";
+  import { TabItem, Tabs, Tooltip } from "flowbite-svelte";
   import {
     LocationModal,
     CustomRestaurant,
