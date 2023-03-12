@@ -6,6 +6,7 @@
     ListgroupItem,
     P,
   } from "flowbite-svelte";
+  import { BuildingStorefront, Megaphone } from "svelte-heros-v2";
   import { PageBaseline } from ".";
   import Slot from "../components/Slot.svelte";
   import { preferences } from "../stores/preferencesStore";
@@ -43,7 +44,7 @@
     if (checked && numSelected <= 1) {
       event.preventDefault();
       showToast({
-        message: "You must have at least one restaurant selected to spin",
+        message: "You must have at least one restaurant selected",
         type: "warning",
         timeout: 3000,
       });
@@ -71,25 +72,33 @@
         {/key}
         <div class="flex-none">
           <Button color="primary" size="xl" class="w-full" on:click={startReel}>
-            Spin
+            Decide!
           </Button>
         </div>
       {:else}
-        <div class="flex-1 flex items-center justify-center">
-          <P size="xl">
-            Cannot spin without any restaurants. Please add at least one
-            restaurant.
-          </P>
+        <div
+          class="flex-1 flex-col flex items-center justify-center gap-2 dark:text-white"
+        >
+          <Megaphone size="64" />
+          <P size="xl">Start deciding by adding at least one restaurant</P>
         </div>
       {/if}
     </div>
-    <div class="col-span-1 lg:col-span-2 h-full relative min-h-[50vh] lg:min-h-0">
+    <div
+      class="col-span-1 lg:col-span-2 h-full relative min-h-[50vh] lg:min-h-0"
+    >
       <Listgroup class="absolute top-0 right-0 left-0 bottom-0 overflow-scroll">
         <div
           class="bg-primary-700 text-white font-bold text-center sticky top-0 py-2"
         >
           Selected Restaurants
         </div>
+        {#if restaurantOptions.length === 0}
+          <div class="pt-8 flex flex-col justify-center items-center text-black dark:text-white">
+            <BuildingStorefront size="48" />
+            <P size="lg">No restaurants added...</P>
+          </div>
+        {/if}
         {#each restaurantOptions as option, index}
           <ListgroupItem>
             <Checkbox

@@ -114,12 +114,10 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
   <div
     id="nearbyMap"
-    class="flex justify-center items-center col-span-1 lg:col-span-2 rounded-lg h-[500px]"
+    class="flex flex-col dark:text-white justify-center items-center col-span-1 lg:col-span-2 rounded-lg h-[500px]"
   >
-    <P size="xl"
-      >Cannot load map until a location has been provided. Please update your
-      location.
-    </P>
+    <MapPin size="64" />
+    <P size="xl">Update your location to load map</P>
   </div>
   <div class="flex flex-col max-h-[500px] ">
     <Listgroup class="h-fit overflow-auto grow">
