@@ -36,6 +36,10 @@
     initializeSlot(slotRef, reelItems);
   });
 
+  export function updateReelOptions(reelItems: T[]) {
+    initializeSlot(slotRef, reelItems);
+  }
+
   function shuffleArray(a: any[]) {
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
