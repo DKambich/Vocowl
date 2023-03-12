@@ -23,7 +23,7 @@
 
 <PageBaseline>
   <div
-    class="text-right my-4 mx-4 sm:mx-0 text-xs font-semibold text-slate-600 dark:text-white"
+    class="text-right mb-4 text-xs font-semibold text-slate-600 dark:text-white"
   >
     <div>
       {#if userZipcode}
@@ -44,7 +44,6 @@
   <LocationModal bind:open={isLocationModalOpen} />
   <Tabs
     style="full"
-    class="mx-4 sm:mx-0"
     defaultClass="flex rounded-lg divide-x divide-gray-200 shadow dark:divide-gray-500 dark:border-solid dark:border-2 dark:border-gray-500"
   >
     <TabItem open class="w-full ">

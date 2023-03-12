@@ -13,9 +13,7 @@
 </script>
 
 <PageBaseline>
-  <div
-    class="grid lg:grid-cols-5 gap-4 mt-4 mx-4 md:mx-0 h-[90vh] lg:h-[50vh]"
-  >
+  <div class="flex-1 grid grid-rows-2 grid-cols-1 lg:grid-cols-5 gap-4">
     <div class="col-span-3 flex flex-col gap-2">
       <Slot
         reelItems={restaurants}
@@ -24,12 +22,12 @@
         bind:startReel
       />
       <div class="flex-none">
-        <Button color="primary" size="xl" class="w-full" on:click={startReel}
-          >Spin</Button
-        >
+        <Button color="primary" size="xl" class="w-full" on:click={startReel}>
+          Spin
+        </Button>
       </div>
     </div>
-    <div>
+    <div class="col-span-2">
       {#each restaurants as restaurant}
         {restaurant.name}<br />
       {/each}

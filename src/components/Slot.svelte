@@ -104,16 +104,16 @@
   class="relative h-full w-full overflow-hidden rounded-lg shadow-inner shadow-black dark:shadow-slate-400"
 >
   <div
-    class="top-1/2 -translate-y-[7.5px] absolute left-0 w-0 h-0 border-l-[25px] border-primary-700 border-y-[15px] border-y-transparent z-50"
+    class="top-1/2 -translate-y-[15px] absolute left-0 w-0 h-0 border-l-[25px] border-primary-700 border-y-[15px] border-y-transparent z-50"
   />
   <div
-    class="top-1/2 -translate-y-[7.5px] absolute right-0 w-0 h-0 border-r-[25px] border-primary-700 border-y-[15px] border-y-transparent z-50"
+    class="top-1/2 -translate-y-[15px] absolute right-0 w-0 h-0 border-r-[25px] border-primary-700 border-y-[15px] border-y-transparent z-50"
   />
   <div id="slot" class="w-full h-full absolute text-center">
     {#each finalReelItems as option}
       <div
         class="text-xl md:text-2xl  xl:text-3xl flex justify-center items-center overflow-hidden text-ellipsis dark:text-white border-t border-black dark:border-slate-600"
-        style={`height: ${itemHeight}px; `}
+        style={`height: ${itemHeight}px; max-height: ${itemHeight}px;`}
       >
         {reelItemBuilder(option)}
       </div>
