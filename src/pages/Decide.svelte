@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button } from "flowbite-svelte";
+  import { Button, Checkbox, Listgroup, ListgroupItem } from "flowbite-svelte";
   import { PageBaseline } from ".";
   import Slot from "../components/Slot.svelte";
   import { preferences } from "../stores/preferencesStore";
@@ -27,10 +27,19 @@
         </Button>
       </div>
     </div>
-    <div class="col-span-2">
-      {#each restaurants as restaurant}
-        {restaurant.name}<br />
-      {/each}
+    <div class="col-span-2 h-full relative">
+      <Listgroup class="absolute top-0 right-0 left-0 bottom-0 overflow-scroll">
+        <div
+          class="bg-primary-700 text-white font-bold text-center sticky top-0 py-2"
+        >
+          Selected Restaurants
+        </div>
+        {#each [...restaurants] as restaurant}
+          <ListgroupItem>
+            <Checkbox class="w-100">{restaurant.name}</Checkbox>
+          </ListgroupItem>
+        {/each}
+      </Listgroup>
     </div>
   </div>
 </PageBaseline>
