@@ -72,12 +72,13 @@
     city,
     state,
   }: ManualPlaceFormValues) {
-    const manualRestaurant: Restaurant = {
+    const customRestaurant: Restaurant = {
       name: restaurant,
       address: `${address1} ${address2}, ${city}, ${state}`,
       id: GUID(),
+      source: "custom",
     };
-    console.log(manualRestaurant);
+    console.log(customRestaurant);
     formValues.restaurant = "";
     formValues.address1 = "";
     formValues.address2 = "";
@@ -85,7 +86,7 @@
     formValues.state = "";
     state;
 
-    addRestaurant(manualRestaurant);
+    addRestaurant(customRestaurant);
     showToast({
       message: `Added ${restaurant}`,
       type: "success",
@@ -185,5 +186,7 @@
     </div>
   {/if}
 
-  <Button type="submit" color="primary" class="w-full md:w-max">Add Restaurant</Button>
+  <Button type="submit" color="primary" class="w-full md:w-max"
+    >Add Restaurant</Button
+  >
 </form>

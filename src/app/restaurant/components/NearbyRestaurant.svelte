@@ -11,14 +11,28 @@
     Range,
   } from "flowbite-svelte";
   import { afterUpdate } from "svelte";
-  import { MagnifyingGlass, MapPin, PlusCircle } from "svelte-heros-v2";
+  import {
+    MagnifyingGlass,
+    MapPin,
+    MinusCircle,
+    PlusCircle,
+  } from "svelte-heros-v2";
   import { MILES_TO_METERS } from "../../../constants";
   import { getNearbyRestaurants } from "../../../services/GoogleMapsService";
-  import type { NearbyPlacesResponse } from "../../../types";
+  import {
+    addRestaurant,
+    preferences,
+    removeRestaurant,
+  } from "../../../stores/preferencesStore";
+  import { showToast } from "../../../stores/toastStore";
+  import type { NearbyPlacesResponse, Restaurant } from "../../../types";
   import { IconMessage } from "../../shared";
 
   // External user location
   export let location: google.maps.LatLngLiteral;
+
+  let currentLocation = location;
+  $: savedRestaurants = $preferences.restaurants;
 
   // Internal Map state variables
   let nearbyMap: google.maps.Map;
@@ -35,10 +49,11 @@
   let openNow = true;
 
   // Update map center and search radius center when location changes
-  $: {
+  $: if (location != currentLocation) {
     nearbyMap?.moveCamera({ center: location });
     searchCircle?.setCenter(location);
     if (location && nearbyMap) loadNearbyRestaurants();
+    currentLocation = location;
   }
 
   // Update map search circle when search radius changes
@@ -109,12 +124,45 @@
     // Increase zoom level on restaurant location
     nearbyMap?.setZoom(16);
   }
+
+  function addGoogleRestaurant(
+    googleRestaurant: google.maps.places.PlaceResult
+  ) {
+    const {
+      name,
+      formatted_address,
+      place_id,
+      geometry: { location },
+    } = googleRestaurant;
+
+    const restaurant: Restaurant = {
+      id: place_id,
+      name: name,
+      address: formatted_address,
+      location: { lat: location.lat(), lng: location.lng() },
+      source: "google",
+    };
+
+    addRestaurant(restaurant);
+    showToast({ message: `Added ${name}`, type: "success", timeout: 2000 });
+  }
+
+  function removeGoogleRestaurant(
+    googleRestaurant: google.maps.places.PlaceResult
+  ) {
+    removeRestaurant(googleRestaurant.place_id);
+    showToast({
+      message: `Removed ${googleRestaurant.name}`,
+      type: "success",
+      timeout: 2000,
+    });
+  }
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[50vh]">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
   <div
     id="nearbyMap"
-    class="col-span-1 lg:col-span-2 rounded-lg  flex justify-center"
+    class="col-span-1 lg:col-span-2 rounded-lg flex justify-center h-[50vh]"
   >
     <IconMessage icon={MapPin} size="xl">
       Update your location to load map
@@ -139,9 +187,17 @@
               class="min-w-max px-2 cursor-pointer hover:text-primary-600"
               on:click={() => centerMapOnRestaurant(restaurant)}
             />
-            <PlusCircle
-              class="min-w-max cursor-pointer hover:text-primary-600"
-            />
+            {#if savedRestaurants.find((res) => res.id === restaurant.place_id)}
+              <MinusCircle
+                class="min-w-max cursor-pointer hover:text-primary-600"
+                on:click={() => removeGoogleRestaurant(restaurant)}
+              />
+            {:else}
+              <PlusCircle
+                class="min-w-max cursor-pointer hover:text-primary-600"
+                on:click={() => addGoogleRestaurant(restaurant)}
+              />
+            {/if}
           </ListgroupItem>
         </div>
       {/each}

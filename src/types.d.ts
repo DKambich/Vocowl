@@ -3,6 +3,7 @@ export type Restaurant = {
   name: string;
   address?: string;
   location?: google.maps.LatLngLiteral;
+  source: "custom" | "google";
 };
 
 export type Preferences = {

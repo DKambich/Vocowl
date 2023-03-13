@@ -1,6 +1,10 @@
 import { MILES_TO_METERS } from "../constants";
 import { map } from "../stores/googleMapsStore";
-import type { NearbyPlacesRequest, SearchPlacesRequest } from "../types";
+import type {
+  NearbyPlacesRequest,
+  Restaurant,
+  SearchPlacesRequest,
+} from "../types";
 
 let storedMap: google.maps.Map;
 
@@ -75,4 +79,15 @@ export function getLatLngFromZipcode(
 ): Promise<google.maps.GeocoderResponse> {
   const geocoder = new google.maps.Geocoder();
   return geocoder.geocode({ address: zipcode });
+}
+
+export function generateGoogleMapsURL(restaurant: Restaurant) {
+  const url = "https://www.google.com/maps/search/?api=1";
+  let query = `&query=`;
+  query += `${restaurant.name}`;
+  if (restaurant.location) {
+    query += `+${restaurant.location.lat},${restaurant.location.lng}`;
+  }
+  query += `&query_place_id=${restaurant.id}`;
+  return encodeURI(`${url}${query}`);
 }

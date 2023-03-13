@@ -90,6 +90,7 @@
       name: name,
       address: formatted_address,
       location: { lat: location.lat(), lng: location.lng() },
+      source: "google",
     };
 
     addRestaurant(restaurant);
