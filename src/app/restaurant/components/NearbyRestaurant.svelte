@@ -13,9 +13,9 @@
   } from "flowbite-svelte";
   import { afterUpdate } from "svelte";
   import { ChevronDown, ChevronUp, MapPin, PlusCircle } from "svelte-heros-v2";
-  import { getNearbyRestaurants } from "../api/GoogleMapsService";
-  import { MILES_TO_METERS } from "../constants";
-  import type { NearbyPlacesResponse } from "../types";
+  import { getNearbyRestaurants } from "../../../services/GoogleMapsService";
+  import { MILES_TO_METERS } from "../../../constants";
+  import type { NearbyPlacesResponse } from "../../../types";
 
   // External user location
   export let location: google.maps.LatLngLiteral;

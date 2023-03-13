@@ -13,8 +13,8 @@
   import {
     getLatLngFromZipcode,
     getZipcodeFromLatLng,
-  } from "../api/GoogleMapsService";
-  import { cacheLocation, preferences } from "../stores/preferencesStore";
+  } from "../../services/GoogleMapsService";
+  import { cacheLocation, preferences } from "../../stores/preferencesStore";
 
   // External LatLng of the user's location
   let userLocation = $preferences.location.latlng;

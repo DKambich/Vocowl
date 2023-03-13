@@ -9,22 +9,20 @@
   } from "flowbite-svelte";
   import { createForm } from "svelte-forms-lib";
   import { MagnifyingGlass } from "svelte-heros-v2";
-  import { get } from "svelte/store";
-  import { fade } from "svelte/transition";
-  import { queryNearbyRestaurants } from "../api/GoogleMapsService";
-  import { MILES_TO_METERS } from "../constants";
+  import { queryNearbyRestaurants } from "../../../services/GoogleMapsService";
+  import { MILES_TO_METERS } from "../../../constants";
   import {
     addRestaurant,
     preferences,
     removeRestaurant,
-  } from "../stores/preferencesStore";
-  import { showToast } from "../stores/toastStore";
+  } from "../../../stores/preferencesStore";
+  import { showToast } from "../../../stores/toastStore";
   import type {
     PlacesSearchFormErrors,
     PlacesSearchFormValues,
     Restaurant,
     SearchPlacesResponse,
-  } from "../types";
+  } from "../../../types";
 
   export let location: google.maps.LatLngLiteral;
 

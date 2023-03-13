@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Loader, LoaderStatus } from "@googlemaps/js-api-loader";
-  import { map } from "../stores/googleMapsStore";
-  import { GOOGLE_MAPS_API_KEY } from "../credentials";
+  import { map } from "../../stores/googleMapsStore";
+  import { GOOGLE_MAPS_API_KEY } from "../../credentials";
 
   let loading = true;
   let successful = false;

@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { showToast } from "../stores/toastStore";
-  import { PageBaseline } from "./";
+  import { PageBaseline } from "../meta";
 </script>
 
 <PageBaseline>

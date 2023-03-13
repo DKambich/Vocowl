@@ -9,15 +9,15 @@
   } from "flowbite-svelte";
   import { createForm } from "svelte-forms-lib";
   import { fade } from "svelte/transition";
-  import { US_STATES } from "../constants";
-  import { addRestaurant } from "../stores/preferencesStore";
-  import { showToast } from "../stores/toastStore";
+  import { US_STATES } from "../../../constants";
+  import { addRestaurant } from "../../../stores/preferencesStore";
+  import { showToast } from "../../../stores/toastStore";
   import type {
     ManualPlaceFormErrors,
     ManualPlaceFormValues,
     Restaurant,
-  } from "../types";
-  import { GUID } from "../utilities";
+  } from "../../../types";
+  import { GUID } from "../../../utilities";
 
   const states = US_STATES.map((state) => ({
     value: state.abbreviation,

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Button, Card } from "flowbite-svelte";
   import { MapPin, Trash } from "svelte-heros-v2";
-  import { preferences, removeRestaurant } from "../stores/preferencesStore";
-  import type { Restaurant } from "../types";
+  import { preferences, removeRestaurant } from "../../../stores/preferencesStore";
+  import type { Restaurant } from "../../../types";
 
   $: restaurants = $preferences.restaurants;
 

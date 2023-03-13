@@ -7,11 +7,11 @@
     P,
   } from "flowbite-svelte";
   import { BuildingStorefront, Megaphone } from "svelte-heros-v2";
-  import { PageBaseline } from ".";
-  import Slot from "../components/Slot.svelte";
-  import { preferences } from "../stores/preferencesStore";
-  import { showToast } from "../stores/toastStore";
-  import type { Restaurant } from "../types";
+  import { PageBaseline } from "../meta";
+  import Slot from "./components/Slot.svelte";
+  import { preferences } from "../../stores/preferencesStore";
+  import { showToast } from "../../stores/toastStore";
+  import type { Restaurant } from "../../types";
   let restaurants = $preferences.restaurants;
 
   let restaurantOptions = restaurants.map((restaurant) => ({
@@ -94,7 +94,9 @@
           Selected Restaurants
         </div>
         {#if restaurantOptions.length === 0}
-          <div class="pt-8 flex flex-col justify-center items-center text-black dark:text-white">
+          <div
+            class="pt-8 flex flex-col justify-center items-center text-black dark:text-white"
+          >
             <BuildingStorefront size="48" />
             <P size="lg">No restaurants added...</P>
           </div>

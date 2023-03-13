@@ -1,20 +1,20 @@
 <script lang="ts">
   import { TabItem, Tabs, Tooltip } from "flowbite-svelte";
   import {
-    LocationModal,
     CustomRestaurant,
     NearbyRestaurant,
     SearchRestaurant,
-  } from "../components";
-  import { preferences } from "../stores/preferencesStore";
-  import { PageBaseline } from ".";
+  } from "./index";
+  import { LocationModal } from "../shared";
+  import { preferences } from "../../stores/preferencesStore";
+  import { PageBaseline } from "../meta";
   import {
     ListBullet,
     MagnifyingGlass,
     Map,
     PencilSquare,
   } from "svelte-heros-v2";
-  import RestaurantList from "../components/RestaurantList.svelte";
+  import RestaurantList from "./components/RestaurantList.svelte";
 
   $: userLocation = $preferences.location.latlng;
   $: userZipcode = $preferences.location.zipcode;

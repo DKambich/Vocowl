@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { ResourceLoader } from "./components";
+  import { ResourceLoader, Error, Loading } from "./app/meta";
 
   import Router from "svelte-spa-router";
   import { routes } from "./routes";
-  import { Error, Loading } from "./pages";
 </script>
 
 <ResourceLoader>

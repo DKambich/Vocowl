@@ -21,11 +21,11 @@
     DECIDE_ROUTE,
     NAVLI_INACTIVE_CLASS,
     NAVLI_ACTIVE_CLASS,
-  } from "../constants";
+  } from "../../constants";
 
   // Local Imports
-  import { preferences, toggleTheme } from "../stores/preferencesStore";
-  import { Vocowl } from "./";
+  import { preferences, toggleTheme } from "../../stores/preferencesStore";
+  import { Vocowl } from "../shared";
 
   let currentPage = $location;
 </script>

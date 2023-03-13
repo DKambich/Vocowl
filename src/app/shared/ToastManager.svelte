@@ -7,7 +7,7 @@
     ShieldExclamation,
   } from "svelte-heros-v2";
   import { fade } from "svelte/transition";
-  import { toasts } from "../stores/toastStore";
+  import { toasts } from "../../stores/toastStore";
 
   function getIcon(type: string) {
     if (type === "success") return CheckCircle;
