@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
 
   type T = $$Generic;
   interface $$Events {
@@ -20,8 +20,8 @@
   export let slotOptions = defaultSlotOptions;
   export let reelItems: T[] = [];
   export let reelItemBuilder = (reelItem: T) => `${reelItem}`;
+  export let onReelStart = () => {};
   export let onReelEnd = (_: T) => {};
-  export const startReel = spinReel;
 
   // Local variables
   let slotRef: HTMLElement;
@@ -29,11 +29,16 @@
   let isSpinning = false;
   let hasSpun = false;
   let itemHeight = 0;
+  let reelAnimation: Animation;
 
   onMount(() => {
     slotRef = document.getElementById("slot");
     itemHeight = slotRef.clientHeight / 3;
     initializeSlot(slotRef, reelItems);
+  });
+
+  onDestroy(() => {
+    reelAnimation?.cancel();
   });
 
   export function updateReelOptions(reelItems: T[]) {
@@ -65,10 +70,12 @@
     finalReelItems = finalReelItems.slice(0, slotOptions.maxReelItems);
   }
 
-  function spinReel() {
+  export function startReel() {
     // Disallow a new spin if already spinning
     if (isSpinning) return;
     isSpinning = true;
+
+    onReelStart();
 
     // Re-initialize slot if it has been spun
     if (hasSpun) initializeSlot(slotRef, reelItems);
@@ -81,7 +88,7 @@
 
     const offsetAmount = `${-winningReelItem.offsetTop}px`;
 
-    const reelAnimation = slotRef.animate(
+    reelAnimation = slotRef.animate(
       { transform: `translate(0, ${offsetAmount})` },
       {
         duration: slotOptions.animationLength,

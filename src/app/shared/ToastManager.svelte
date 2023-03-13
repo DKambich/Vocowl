@@ -25,7 +25,7 @@
 </script>
 
 <div
-  class="fixed bottom-0 right-0 flex flex-col-reverse items-end gap-y-2 pb-2 pr-2 w-screen "
+  class="fixed bottom-0 right-0 flex flex-col-reverse items-end gap-y-2 pb-2 pr-2 lg:pb-8 lg:pr-8 w-screen "
 >
   {#each $toasts as toast (toast.id)}
     <Toast
@@ -33,7 +33,7 @@
       color={getColor(toast.type)}
       transition={fade}
       params={{ duration: 150 }}
-      divClass="w-full max-w-xs p-4"
+      divClass="w-full max-w-xs md:max-w-lg p-4"
     >
       <svelte:component this={getIcon(toast.type)} slot="icon" />
       <span class="font-semibold"> {toast.message} </span>

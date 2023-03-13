@@ -7,15 +7,15 @@
     Label,
     Listgroup,
     ListgroupItem,
-    P,
     Radio,
     Range,
   } from "flowbite-svelte";
   import { afterUpdate } from "svelte";
-  import { ChevronDown, ChevronUp, MapPin, PlusCircle } from "svelte-heros-v2";
-  import { getNearbyRestaurants } from "../../../services/GoogleMapsService";
+  import { MagnifyingGlass, MapPin, PlusCircle } from "svelte-heros-v2";
   import { MILES_TO_METERS } from "../../../constants";
+  import { getNearbyRestaurants } from "../../../services/GoogleMapsService";
   import type { NearbyPlacesResponse } from "../../../types";
+  import { IconMessage } from "../../shared";
 
   // External user location
   export let location: google.maps.LatLngLiteral;
@@ -111,15 +111,16 @@
   }
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[50vh]">
   <div
     id="nearbyMap"
-    class="flex flex-col dark:text-white justify-center items-center col-span-1 lg:col-span-2 rounded-lg h-[500px]"
+    class="col-span-1 lg:col-span-2 rounded-lg  flex justify-center"
   >
-    <MapPin size="64" />
-    <P size="xl">Update your location to load map</P>
+    <IconMessage icon={MapPin} size="xl">
+      Update your location to load map
+    </IconMessage>
   </div>
-  <div class="flex flex-col max-h-[500px] ">
+  <div class="col-span-1 flex flex-col max-h-[50vh]">
     <Listgroup class="h-fit overflow-auto grow">
       <h3
         class="text-center bg-primary-700 py-2 text-white font-bold rounded-t-lg sticky top-0"
@@ -153,7 +154,9 @@
         >
       {/if}
       {#if nearbyRestaurants.length === 0}
-        <div class="text-center py-4">No Results Found...</div>
+        <IconMessage class="pt-4" icon={MagnifyingGlass} size="sm">
+          No Results Found...
+        </IconMessage>
       {/if}
     </Listgroup>
     <Accordion flush>

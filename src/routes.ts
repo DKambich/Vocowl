@@ -1,8 +1,8 @@
-import { HOME_ROUTE, RESTAURANT_ROUTE, DECIDE_ROUTE } from "./constants";
-import Home from "./app/home/Home.svelte";
+import { Decide } from "./app/decide/";
+import { Home } from "./app/home/";
 import { NotFound } from "./app/meta";
-import Restaurant from "./app/restaurant/Restaurant.svelte";
-import Decide from "./app/decide/Decide.svelte";
+import { Restaurant } from "./app/restaurant";
+import { DECIDE_ROUTE, HOME_ROUTE, RESTAURANT_ROUTE } from "./constants";
 
 const routes = {};
 routes[DECIDE_ROUTE] = Decide;

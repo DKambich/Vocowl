@@ -1,118 +1,69 @@
 <script lang="ts">
-  import {
-    Button,
-    Checkbox,
-    Listgroup,
-    ListgroupItem,
-    P,
-  } from "flowbite-svelte";
-  import { BuildingStorefront, Megaphone } from "svelte-heros-v2";
-  import { PageBaseline } from "../meta";
-  import Slot from "./components/Slot.svelte";
+  import { Button } from "flowbite-svelte";
+  import { Megaphone } from "svelte-heros-v2";
+  import { Slot } from ".";
   import { preferences } from "../../stores/preferencesStore";
-  import { showToast } from "../../stores/toastStore";
   import type { Restaurant } from "../../types";
+  import { PageBaseline } from "../meta";
+  import { IconMessage } from "../shared";
+  import { RestaurantSelector } from "./";
+
   let restaurants = $preferences.restaurants;
+  let isSpinning = false;
 
-  let restaurantOptions = restaurants.map((restaurant) => ({
-    selected: true,
-    restaurant,
-  }));
-
-  console.log(restaurantOptions);
-
-  let filteredRestaurants;
-  $: {
-    filteredRestaurants = restaurantOptions
-      .filter((option) => option.selected)
-      .map((option) => option.restaurant);
-  }
-
+  // Variable Bindings
+  let filteredRestaurants: Restaurant[] = [];
   let startReel;
 
-  function onReelEnd(res: Restaurant) {
-    alert(`${res.name} Won!!!`);
+  function onReelStart() {
+    isSpinning = true;
   }
 
-  function onCheckboxClick(event: Event, index: number) {
-    const checked = restaurantOptions[index].selected;
-
-    const numSelected = restaurantOptions.filter(
-      (option) => option.selected
-    ).length;
-
-    if (checked && numSelected <= 1) {
-      event.preventDefault();
-      showToast({
-        message: "You must have at least one restaurant selected",
-        type: "warning",
-        timeout: 3000,
-      });
-      return;
-    }
-
-    restaurantOptions[index].selected = !checked;
-    restaurantOptions = restaurantOptions;
+  function onReelEnd(res: Restaurant) {
+    isSpinning = false;
+    alert(`${res.name} Won!!!`);
   }
 </script>
 
 <PageBaseline>
   <div class="flex-1 grid grid-rows-2 grid-cols-1 lg:grid-cols-5 gap-4">
     <div
-      class="col-span-1 lg:col-span-3 flex flex-col gap-2 row-span-2 lg:row-span-1 min-h-[50vh] lg:min-h-0"
+      class="col-span-1 row-span-2 min-h-[50vh] lg:col-span-3 lg:row-span-1 lg:min-h-0 flex flex-col gap-2"
     >
       {#if filteredRestaurants.length > 0}
-        {#key filteredRestaurants}
+        {#key filteredRestaurants.length}
           <Slot
             reelItems={filteredRestaurants}
             reelItemBuilder={(res) => res.name}
+            {onReelStart}
             {onReelEnd}
             bind:startReel
           />
         {/key}
-        <div class="flex-none">
-          <Button color="primary" size="xl" class="w-full" on:click={startReel}>
-            Decide!
-          </Button>
-        </div>
-      {:else}
-        <div
-          class="flex-1 flex-col flex items-center justify-center gap-2 dark:text-white"
+        <Button
+          color="primary"
+          disabled={isSpinning}
+          size="xl"
+          on:click={startReel}
         >
-          <Megaphone size="64" />
-          <P size="xl">Start deciding by adding at least one restaurant</P>
+          Decide!
+        </Button>
+      {:else}
+        <div class="flex-1 flex justify-center">
+          <IconMessage icon={Megaphone} size="xl">
+            Start deciding by adding at least one restaurant
+          </IconMessage>
         </div>
       {/if}
     </div>
     <div
-      class="col-span-1 lg:col-span-2 h-full relative min-h-[50vh] lg:min-h-0"
+      class="col-span-1 row-span-2 min-h-[50vh] lg:col-span-2 lg:row-span-1 lg:min-h-0  relative"
     >
-      <Listgroup class="absolute top-0 right-0 left-0 bottom-0 overflow-scroll">
-        <div
-          class="bg-primary-700 text-white font-bold text-center sticky top-0 py-2"
-        >
-          Selected Restaurants
-        </div>
-        {#if restaurantOptions.length === 0}
-          <div
-            class="pt-8 flex flex-col justify-center items-center text-black dark:text-white"
-          >
-            <BuildingStorefront size="48" />
-            <P size="lg">No restaurants added...</P>
-          </div>
-        {/if}
-        {#each restaurantOptions as option, index}
-          <ListgroupItem>
-            <Checkbox
-              checked={option.selected}
-              class="w-100"
-              on:click={(event) => onCheckboxClick(event, index)}
-            >
-              {option.restaurant.name}
-            </Checkbox>
-          </ListgroupItem>
-        {/each}
-      </Listgroup>
+      <RestaurantSelector
+        {restaurants}
+        bind:filteredRestaurants
+        disabled={isSpinning}
+      />
     </div>
   </div>
 </PageBaseline>

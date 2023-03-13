@@ -1,16 +1,9 @@
 <script lang="ts">
-  import {
-    Button,
-    Card,
-    Helper,
-    Input,
-    Search,
-    Spinner,
-  } from "flowbite-svelte";
+  import { Button, Card, Helper, Input, Spinner } from "flowbite-svelte";
   import { createForm } from "svelte-forms-lib";
   import { MagnifyingGlass } from "svelte-heros-v2";
-  import { queryNearbyRestaurants } from "../../../services/GoogleMapsService";
   import { MILES_TO_METERS } from "../../../constants";
+  import { queryNearbyRestaurants } from "../../../services/GoogleMapsService";
   import {
     addRestaurant,
     preferences,
@@ -25,72 +18,6 @@
   } from "../../../types";
 
   export let location: google.maps.LatLngLiteral;
-
-  // TODO: Remove this variable
-  const dummySearchResults: google.maps.places.PlaceResult[] = [
-    {
-      place_id: "0",
-      name: "Lakin Ltd",
-      formatted_address: "8858 Bethel Circle, Joseland, MT 07259",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "1",
-      name: "Stark and Sons",
-      formatted_address:
-        "485 Camille Corner Apt. 264, North Christinebury, WY 56920",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "2",
-      name: "Feil LLC",
-      formatted_address: "2821 Scarlett Shores, Bayerside, WA 84797-5224",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "3",
-      name: "Quitzon, Gerhold and Robel",
-      formatted_address: "364 O'Connell Unions Apt. 566 Harmonyside, WI 98595",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "4",
-      name: "Howe Inc",
-      formatted_address:
-        "9457 Anissa Mall Suite 331 North Josuechester, WY 40357",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "5",
-      name: "Heller Inc",
-      formatted_address: "6457 Mariam Flats Apt. 671 Margiefurt, NM 99341",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "6",
-      name: "Gutkowski, Romaguera and Doyle",
-      formatted_address: "78681 Labadie Fords Lake Nikkiland, CO 26969",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "7",
-      name: "Padberg-Reynolds",
-      formatted_address: "982 Hauck Track Suite 331 West Arnaldo, DE 35621",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "8",
-      name: "Pfannerstill, Jacobi and Auer",
-      formatted_address: "37214 Brooklyn Ridge Rigobertomouth, CA 04574",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-    {
-      place_id: "9",
-      name: "Dooley, Runte and Strosin",
-      formatted_address: "399 Arch View South Nicholauschester, DC 12369",
-      geometry: { location: new google.maps.LatLng(0, 0) },
-    },
-  ];
 
   let searchResults: google.maps.places.PlaceResult[] = [];
   let isSearchLoading = false;
