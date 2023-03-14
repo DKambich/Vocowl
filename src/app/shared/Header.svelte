@@ -16,15 +16,14 @@
   } from "svelte-heros-v2";
   import { location } from "svelte-spa-router";
   import {
-    HOME_ROUTE,
-    RESTAURANT_ROUTE,
     DECIDE_ROUTE,
-    NAVLI_INACTIVE_CLASS,
+    HOME_ROUTE,
     NAVLI_ACTIVE_CLASS,
+    NAVLI_INACTIVE_CLASS,
+    RESTAURANT_ROUTE,
   } from "../../constants";
-
   // Local Imports
-  import { preferences, toggleTheme } from "../../stores/preferencesStore";
+  import { localStorage, toggleTheme } from "../../stores/localStorageStore";
   import { Vocowl } from "../shared";
 
   let currentPage = $location;
@@ -33,7 +32,7 @@
 <Navbar
   let:hidden
   let:toggle
-  color={$preferences.useDarkTheme ? "form" : "indigo"}
+  color={$localStorage.useDarkTheme ? "form" : "indigo"}
 >
   <!-- Vocowl Logo and Title -->
   <NavBrand href="./" class="gap-3 text-indigo-600 dark:text-white">
@@ -82,7 +81,7 @@
       activeClass={NAVLI_ACTIVE_CLASS}
       nonActiveClass={NAVLI_INACTIVE_CLASS}
     >
-      {#if $preferences.useDarkTheme}
+      {#if $localStorage.useDarkTheme}
         <Moon size="18" class="md:hidden" />
         <Moon size="22" class="hidden md:block" />
       {:else}

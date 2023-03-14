@@ -1,23 +1,23 @@
 <script lang="ts">
   import { TabItem, Tabs, Tooltip } from "flowbite-svelte";
   import {
-    CustomRestaurant,
-    ManageRestaurant,
-    NearbyRestaurant,
-    SearchRestaurant,
-  } from "./index";
-  import { LocationModal } from "../shared";
-  import { preferences } from "../../stores/preferencesStore";
-  import { PageBaseline } from "../meta";
-  import {
     ListBullet,
     MagnifyingGlass,
     Map,
     PencilSquare,
   } from "svelte-heros-v2";
+  import {
+    CustomRestaurants,
+    ManageRestaurants,
+    NearbyRestaurants,
+    SearchRestaurants,
+  } from ".";
+  import { localStorage } from "../../stores/localStorageStore";
+  import { PageBaseline } from "../meta";
+  import { LocationModal } from "../shared";
 
-  $: userLocation = $preferences.location.latlng;
-  $: userZipcode = $preferences.location.zipcode;
+  $: userLocation = $localStorage.location.latlng;
+  $: userZipcode = $localStorage.location.zipcode;
   let isLocationModalOpen = false;
 </script>
 
@@ -52,7 +52,7 @@
         <MagnifyingGlass size="18" />
         <span class="hidden sm:block">Search</span>
       </div>
-      <SearchRestaurant location={userLocation} />
+      <SearchRestaurants location={userLocation} />
     </TabItem>
     <Tooltip class="sm:hidden" placement="bottom">
       Add Searched Restaurant
@@ -64,7 +64,7 @@
         <Map size="18" />
         <span class="hidden sm:block">Nearby</span>
       </div>
-      <NearbyRestaurant location={userLocation} />
+      <NearbyRestaurants {userLocation} />
     </TabItem>
     <Tooltip class="sm:hidden" placement="bottom">
       Add Nearby Restaurant
@@ -76,7 +76,7 @@
         <PencilSquare size="18" />
         <span class="hidden sm:block">Custom</span>
       </div>
-      <CustomRestaurant />
+      <CustomRestaurants />
     </TabItem>
     <Tooltip class="sm:hidden" placement="bottom">
       Add Custom Restaurant
@@ -88,7 +88,7 @@
         <ListBullet size="18" />
         <span class="hidden sm:block">Manage</span>
       </div>
-      <ManageRestaurant />
+      <ManageRestaurants />
     </TabItem>
     <Tooltip class=" sm:hidden" placement="bottom">Manage Restaurants</Tooltip>
   </Tabs>

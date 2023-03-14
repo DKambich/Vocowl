@@ -10,13 +10,13 @@
   } from "flowbite-svelte";
   import { MapPin } from "svelte-heros-v2";
   import {
-    getLatLngFromZipcode,
-    getZipcodeFromLatLng,
-  } from "../../services/GoogleMapsService";
-  import { cacheLocation, preferences } from "../../stores/preferencesStore";
+    getLocationFromZipcode,
+    getZipcodeFromLocation,
+  } from "../../services/GeocodingService";
+  import { cacheLocation, localStorage } from "../../stores/localStorageStore";
 
   // External LatLng of the user's location
-  let userLocation = $preferences.location.latlng;
+  let userLocation = $localStorage.location.latlng;
   export let open = false;
 
   // Dictionary of geolocation error messages
@@ -38,8 +38,8 @@
   };
 
   // Internal state variables
-  let verifiedZipcode = $preferences.location.zipcode;
-  let userEnteredZipcode = verifiedZipcode;
+  let verifiedZipcode = $localStorage.location.zipcode;
+  $: userEnteredZipcode = verifiedZipcode;
   let zipcodeError = zipcodeErrors.NONE;
   let loadingGeolocation = false;
   let loadingZipcodeVerification = false;
@@ -56,48 +56,29 @@
         async (location) => {
           try {
             // Geocode the user's zipcode from their location
-            const geocodeResults = await (
-              await getZipcodeFromLatLng(location)
-            ).results;
+            userLocation = {
+              lat: location.coords.latitude,
+              lng: location.coords.longitude,
+            };
+            const zipcode = await getZipcodeFromLocation(userLocation);
 
-            // If there geolocation results
-            if (geocodeResults.length > 0) {
-              // Store the verified zipcode
-              for (let component of geocodeResults[0].address_components) {
-                if (component.types.includes("postal_code")) {
-                  verifiedZipcode = userEnteredZipcode = component.short_name;
-                }
-              }
+            // If there is a zipcode
+            if (zipcode) {
+              // Update the modal
+              verifiedZipcode = zipcode;
 
-              // Store the user's location
-              userLocation = {
-                lat: location.coords.latitude,
-                lng: location.coords.longitude,
-              };
-
-              // Cache the location
-              cacheLocation(userLocation, verifiedZipcode);
+              // Cache the user's location
+              cacheLocation(userLocation, zipcode);
 
               // Clear zipcode errors
               zipcodeError = zipcodeErrors.NONE;
               loadingGeolocation = false;
+              open = false;
             } else {
               zipcodeError = zipcodeErrors.UNKNOWN;
             }
           } catch (e) {
-            switch (e.code) {
-              case google.maps.GeocoderStatus.ZERO_RESULTS:
-              case google.maps.GeocoderStatus.INVALID_REQUEST:
-                zipcodeError = zipcodeErrors.INVALID;
-                break;
-              case google.maps.GeocoderStatus.OVER_QUERY_LIMIT:
-              case google.maps.GeocoderStatus.REQUEST_DENIED:
-              case google.maps.GeocoderStatus.UNKNOWN_ERROR:
-              case google.maps.GeocoderStatus.ERROR:
-              default:
-                zipcodeError = zipcodeErrors.ERROR;
-                break;
-            }
+            zipcodeError = zipcodeErrors.ERROR;
           }
         },
         (error) => {
@@ -132,47 +113,25 @@
     loadingZipcodeVerification = true;
     try {
       // Geocode the user's location  from their zipcode
-      const geocodeResults = await (
-        await getLatLngFromZipcode(userEnteredZipcode)
-      ).results;
 
-      // If there geolocation results
-      if (geocodeResults.length > 0) {
-        // Store the verified zipcode
-        verifiedZipcode = userEnteredZipcode;
+      const location = await getLocationFromZipcode(userEnteredZipcode);
 
-        // Store the user's location
-        const {
-          geometry: { location },
-        } = geocodeResults[0];
-        userLocation = {
-          lat: location.lat(),
-          lng: location.lng(),
-        };
+      verifiedZipcode = userEnteredZipcode;
 
-        // Cache the location
-        cacheLocation(userLocation, verifiedZipcode);
+      // Store the user's location
+      userLocation = {
+        lat: location.lat,
+        lng: location.lng,
+      };
 
-        // Clear zipcode errors
-        zipcodeError = zipcodeErrors.NONE;
-        open = false;
-      } else {
-        zipcodeError = zipcodeErrors.UNKNOWN;
-      }
+      // Cache the location
+      cacheLocation(userLocation, verifiedZipcode);
+
+      // Clear zipcode errors
+      zipcodeError = zipcodeErrors.NONE;
+      open = false;
     } catch (e) {
-      switch (e.code) {
-        case google.maps.GeocoderStatus.ZERO_RESULTS:
-        case google.maps.GeocoderStatus.INVALID_REQUEST:
-          zipcodeError = zipcodeErrors.INVALID;
-          break;
-        case google.maps.GeocoderStatus.OVER_QUERY_LIMIT:
-        case google.maps.GeocoderStatus.REQUEST_DENIED:
-        case google.maps.GeocoderStatus.UNKNOWN_ERROR:
-        case google.maps.GeocoderStatus.ERROR:
-        default:
-          zipcodeError = zipcodeErrors.ERROR;
-          break;
-      }
+      zipcodeError = zipcodeErrors.ERROR;
     } finally {
       loadingZipcodeVerification = false;
     }

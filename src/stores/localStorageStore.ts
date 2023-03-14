@@ -1,8 +1,8 @@
 import { writable } from "svelte-local-storage-store";
 import { get } from "svelte/store";
-import type { Preferences, Restaurant } from "../types";
+import type { LatLng, LocalStorage, Restaurant } from "../types";
 
-function isPreferences(obj: any): obj is Preferences {
+function isPreferences(obj: any): obj is LocalStorage {
   return (
     obj.useDarkTheme !== undefined &&
     obj.restaurants !== undefined &&
@@ -14,27 +14,27 @@ function isRestaurant(obj: any): obj is Restaurant {
   return obj.id !== undefined && obj.name !== undefined;
 }
 
-const defaultPreferences: Preferences = {
+const defaultLocalStorage: LocalStorage = {
   useDarkTheme: window.matchMedia("(prefers-color-scheme: dark)").matches,
   restaurants: [],
   location: { latlng: null, zipcode: "" },
 };
 
 // Create default preferences
-export const preferences = writable<Preferences>(
+export const localStorage = writable<LocalStorage>(
   "preferences",
-  defaultPreferences
+  defaultLocalStorage
 );
 
-if (!isPreferences(get(preferences))) {
-  preferences.update((prefs) => ({
-    ...defaultPreferences,
+if (!isPreferences(get(localStorage))) {
+  localStorage.update((prefs) => ({
+    ...defaultLocalStorage,
     ...prefs,
   }));
 }
 
 // Set the App theme based on the current preferences
-if (get(preferences).useDarkTheme) {
+if (get(localStorage).useDarkTheme) {
   // Use a dark theme
   document.documentElement.classList.add("dark");
 } else {
@@ -44,7 +44,7 @@ if (get(preferences).useDarkTheme) {
 
 export const toggleTheme = () => {
   // Get the current theme
-  const useDarkTheme = get(preferences).useDarkTheme;
+  const useDarkTheme = get(localStorage).useDarkTheme;
 
   // Toggle the App theme based on the current theme
   if (!useDarkTheme) {
@@ -56,17 +56,14 @@ export const toggleTheme = () => {
   }
 
   // Update Preference Store
-  preferences.update((prefs) => ({
+  localStorage.update((prefs) => ({
     ...prefs,
     useDarkTheme: !useDarkTheme,
   }));
 };
 
-export const cacheLocation = (
-  latlng: google.maps.LatLngLiteral,
-  zipcode: string
-) => {
-  preferences.update((prefs) => ({
+export const cacheLocation = (latlng: LatLng, zipcode: string) => {
+  localStorage.update((prefs) => ({
     ...prefs,
     location: {
       latlng,
@@ -76,7 +73,7 @@ export const cacheLocation = (
 };
 
 export const addRestaurant = (restaurant: Restaurant) => {
-  preferences.update((prefs) => ({
+  localStorage.update((prefs) => ({
     ...prefs,
     restaurants: [...prefs.restaurants, restaurant],
   }));
@@ -89,7 +86,7 @@ export const removeRestaurant = (restaurant: string | Restaurant) => {
   } else {
     restaurantID = restaurant;
   }
-  preferences.update((prefs) => ({
+  localStorage.update((prefs) => ({
     ...prefs,
     restaurants: prefs.restaurants.filter(
       (restaurant) => restaurant.id !== restaurantID

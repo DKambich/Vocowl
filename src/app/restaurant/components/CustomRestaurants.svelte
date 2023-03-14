@@ -10,7 +10,7 @@
   import { createForm } from "svelte-forms-lib";
   import { fade } from "svelte/transition";
   import { US_STATES } from "../../../constants";
-  import { addRestaurant } from "../../../stores/preferencesStore";
+  import { addRestaurant } from "../../../stores/localStorageStore";
   import { showToast } from "../../../stores/toastStore";
   import type {
     ManualPlaceFormErrors,

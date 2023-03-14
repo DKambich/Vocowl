@@ -9,12 +9,12 @@
   } from "svelte-heros-v2";
   import { generateGoogleMapsURL } from "../../../services/GoogleMapsService";
   import {
-    preferences,
+    localStorage,
     removeRestaurant,
-  } from "../../../stores/preferencesStore";
+  } from "../../../stores/localStorageStore";
   import { IconMessage } from "../../shared";
 
-  $: restaurants = $preferences.restaurants;
+  $: restaurants = $localStorage.restaurants;
 </script>
 
 {#if restaurants.length === 0}

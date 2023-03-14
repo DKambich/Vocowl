@@ -6,9 +6,9 @@
   import { queryNearbyRestaurants } from "../../../services/GoogleMapsService";
   import {
     addRestaurant,
-    preferences,
+    localStorage,
     removeRestaurant,
-  } from "../../../stores/preferencesStore";
+  } from "../../../stores/localStorageStore";
   import { showToast } from "../../../stores/toastStore";
   import type {
     PlacesSearchFormErrors,
@@ -23,7 +23,7 @@
   let isSearchLoading = false;
   $: locationEmpty = !location;
 
-  $: savedRestaurants = $preferences.restaurants;
+  $: savedRestaurants = $localStorage.restaurants;
 
   const formValues: PlacesSearchFormValues = {
     search: "",

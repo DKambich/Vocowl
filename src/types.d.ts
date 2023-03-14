@@ -1,16 +1,21 @@
+export type LatLng = {
+  lat: number;
+  lng: number;
+};
+
 export type Restaurant = {
   id: string;
   name: string;
   address?: string;
-  location?: google.maps.LatLngLiteral;
+  location?: LatLng;
   source: "custom" | "google";
 };
 
-export type Preferences = {
+export type LocalStorage = {
   useDarkTheme: boolean;
   restaurants: Restaurant[];
   location: {
-    latlng: google.maps.LatLngLiteral;
+    latlng: LatLng;
     zipcode: string;
   };
 };

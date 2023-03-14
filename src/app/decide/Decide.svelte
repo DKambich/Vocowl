@@ -2,13 +2,13 @@
   import { Button } from "flowbite-svelte";
   import { Megaphone } from "svelte-heros-v2";
   import { Slot } from ".";
-  import { preferences } from "../../stores/preferencesStore";
+  import { localStorage } from "../../stores/localStorageStore";
   import type { Restaurant } from "../../types";
   import { PageBaseline } from "../meta";
   import { IconMessage } from "../shared";
   import { RestaurantSelector } from "./";
 
-  let restaurants = $preferences.restaurants;
+  let restaurants = $localStorage.restaurants;
   let isSpinning = false;
 
   // Variable Bindings
