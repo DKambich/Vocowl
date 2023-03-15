@@ -40,12 +40,12 @@
   let nearbyLMap: Leaflet.Map;
   let searchCircle: Leaflet.Circle;
   let mapLayer: Leaflet.TileLayer = Leaflet.tileLayer(
-    "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
       minZoom: 6,
       maxZoom: 16,
       attribution:
-        '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }
   );
 
@@ -80,13 +80,9 @@
   $: {
     nearbyLMap?.removeLayer(mapLayer);
     if (darkMode) {
-      mapLayer.setUrl(
-        "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-      );
+      mapLayer.setUrl("https://tile.openstreetmap.org/{z}/{x}/{y}.png");
     } else {
-      mapLayer.setUrl(
-        "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
-      );
+      mapLayer.setUrl("https://tile.openstreetmap.org/{z}/{x}/{y}.png");
     }
     nearbyLMap?.addLayer(mapLayer);
   }
