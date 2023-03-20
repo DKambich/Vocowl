@@ -1,6 +1,5 @@
 import type { LatLng } from "../types";
-
-const BASE_URL = "https://geocode.maps.co/";
+import type { IGeocodingService } from "./IGeocodingService";
 
 type ReverseGeocodeResult = {
   place_id: number;
@@ -37,30 +36,35 @@ type GeocodeResult = {
   importance: number;
 }[];
 
-export function getZipcodeFromLocation(location: LatLng): Promise<string> {
-  const REVERSE_GEOCODE_URL = `${BASE_URL}/reverse`;
-  const QUERY = new URLSearchParams({
-    lat: location.lat.toString(),
-    lon: location.lng.toString(),
-  }).toString();
+export class GeocodeGeocodingService implements IGeocodingService {
+  private BASE_URL = "https://geocode.maps.co/";
 
-  return fetch(`${REVERSE_GEOCODE_URL}?${QUERY}`)
-    .then((res) => res.json())
-    .then(
-      (reverseGeocode: ReverseGeocodeResult) => reverseGeocode?.address.postcode
-    );
-}
+  async getZipcodeFromLocation(location: LatLng): Promise<string> {
+    const REVERSE_GEOCODE_URL = `${this.BASE_URL}/reverse`;
+    const QUERY = new URLSearchParams({
+      lat: location.lat.toString(),
+      lon: location.lng.toString(),
+    }).toString();
 
-export function getLocationFromZipcode(zipcode: string): Promise<LatLng> {
-  const GEOCODE_URL = `${BASE_URL}/search`;
-  const QUERY = new URLSearchParams({
-    q: `${zipcode},US`,
-  }).toString();
+    const res = await fetch(`${REVERSE_GEOCODE_URL}?${QUERY}`);
+    const reverseGeocode = await res.json();
+    return reverseGeocode?.address.postcode;
+  }
 
-  return fetch(`${GEOCODE_URL}?${QUERY}`)
-    .then((res) => res.json())
-    .then((geocodes: GeocodeResult) => ({
+  async getLocationFromZipcode(
+    zipcode: string,
+    countryCode: string = "US"
+  ): Promise<LatLng> {
+    const GEOCODE_URL = `${this.BASE_URL}/search`;
+    const QUERY = new URLSearchParams({
+      q: `${zipcode},${countryCode}`,
+    }).toString();
+
+    const res = await fetch(`${GEOCODE_URL}?${QUERY}`);
+    const geocodes = await res.json();
+    return {
       lat: Number.parseFloat(geocodes[0].lat),
       lng: Number.parseFloat(geocodes[0].lon),
-    }));
+    };
+  }
 }

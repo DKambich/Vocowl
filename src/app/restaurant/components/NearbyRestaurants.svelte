@@ -2,7 +2,6 @@
   import {
     Accordion,
     AccordionItem,
-    Button,
     Checkbox,
     Label,
     Listgroup,
@@ -25,11 +24,7 @@
     removeRestaurant,
   } from "../../../stores/localStorageStore";
   import { showToast } from "../../../stores/toastStore";
-  import type {
-    LatLng,
-    NearbyPlacesResponse,
-    Restaurant,
-  } from "../../../types";
+  import type { LatLng, Restaurant } from "../../../types";
   import { IconMessage } from "../../shared";
 
   // User Location Variables
@@ -49,9 +44,8 @@
     }
   );
 
-  let nearbyRestaurants: google.maps.places.PlaceResult[] = [];
-  let nearbyPagination: google.maps.places.PlaceSearchPagination;
-  let nearbyMarkers: google.maps.Marker[] = [];
+  let nearbyRestaurants: Restaurant[] = [];
+  let nearbyMarkers: L.Marker[] = [];
 
   // Internal Search Options state variables
   let searchRadius = 5;
@@ -99,7 +93,7 @@
         fillOpacity: 0.35,
         radius: searchRadius * MILES_TO_METERS,
       }).addTo(nearbyLMap);
-      Leaflet.marker([50.5, 30.5]).addTo(nearbyLMap);
+      Leaflet.marker(userLocation).addTo(nearbyLMap);
       loadNearbyRestaurants();
     }
   });
@@ -108,9 +102,9 @@
     // Clear nearby restaurants
     nearbyRestaurants = [];
     // Remove existing markers from map and clear markers
-    nearbyMarkers.forEach((marker) => marker.setMap(null));
     nearbyMarkers = [];
 
+    nearbyRestaurants = [];
     // Fetch the nearby restaurants based on current options
     // getNearbyRestaurants({
     //   map: nearbyMap,
@@ -122,57 +116,26 @@
     // });
   }
 
-  function handleNearbyRestaurants(nearbyResult: NearbyPlacesResponse) {
-    const { results, pagination } = nearbyResult;
-    // Add new results to the end of the nearby restaurants
-    nearbyRestaurants = [...nearbyRestaurants, ...results];
-    // TODO: Add new markers to the end of the markers
-    nearbyMarkers = [...nearbyMarkers];
-    // Update the pagination object
-    nearbyPagination = pagination;
-  }
-
-  function centerMapOnRestaurant({
-    geometry: {
-      location: { lat, lng },
-    },
-  }: google.maps.places.PlaceResult) {
+  function centerMapOnRestaurant({ location }: Restaurant) {
     // Move the map to center on the restaurant location
-    nearbyLMap?.setView([lat(), lng()]);
+    nearbyLMap?.setView(location);
     // Increase zoom level on restaurant location
     nearbyLMap?.setZoom(16);
   }
 
-  function addGoogleRestaurant(
-    googleRestaurant: google.maps.places.PlaceResult
-  ) {
-    const {
-      name,
-      formatted_address,
-      place_id,
-      geometry: { location },
-    } = googleRestaurant;
-
-    const restaurant: Restaurant = {
-      id: place_id,
-      name: name,
-      address: formatted_address,
-      location: { lat: location.lat(), lng: location.lng() },
-      source: "google",
-    };
-
+  function addMapRestaurant(restaurant: Restaurant) {
     addRestaurant(restaurant);
-    showToast({ message: `Added ${name}`, type: "success", timeout: 2000 });
+    showToast({
+      message: `Added ${restaurant.name}`,
+      type: "success",
+    });
   }
 
-  function removeGoogleRestaurant(
-    googleRestaurant: google.maps.places.PlaceResult
-  ) {
-    removeRestaurant(googleRestaurant.place_id);
+  function removeMapRestaurant(restaurant: Restaurant) {
+    removeRestaurant(restaurant);
     showToast({
-      message: `Removed ${googleRestaurant.name}`,
+      message: `Removed ${restaurant.name}`,
       type: "success",
-      timeout: 2000,
     });
   }
 </script>
@@ -213,28 +176,20 @@
               class="min-w-max px-2 cursor-pointer hover:text-primary-600"
               on:click={() => centerMapOnRestaurant(restaurant)}
             />
-            {#if savedRestaurants.find((res) => res.id === restaurant.place_id)}
+            {#if savedRestaurants.find((res) => res.id === restaurant.id)}
               <MinusCircle
                 class="min-w-max cursor-pointer hover:text-primary-600"
-                on:click={() => removeGoogleRestaurant(restaurant)}
+                on:click={() => removeMapRestaurant(restaurant)}
               />
             {:else}
               <PlusCircle
                 class="min-w-max cursor-pointer hover:text-primary-600"
-                on:click={() => addGoogleRestaurant(restaurant)}
+                on:click={() => addMapRestaurant(restaurant)}
               />
             {/if}
           </ListgroupItem>
         </div>
       {/each}
-      {#if nearbyPagination?.hasNextPage}
-        <Button
-          color="primary"
-          class="w-full"
-          on:click={() => nearbyPagination?.nextPage()}
-          >Load More Results</Button
-        >
-      {/if}
       {#if nearbyRestaurants.length === 0}
         <IconMessage class="pt-4" icon={MagnifyingGlass} size="sm">
           No Results Found...

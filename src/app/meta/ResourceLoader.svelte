@@ -1,7 +1,10 @@
 <script lang="ts">
   import { Loader, LoaderStatus } from "@googlemaps/js-api-loader";
-  import { map } from "../../stores/googleMapsStore";
+  import { setContext } from "svelte";
   import { GOOGLE_MAPS_API_KEY } from "../../credentials";
+  import { GeocodeGeocodingService } from "../../services/GeocodingService";
+  import type { IGeocodingService } from "../../services/IGeocodingService";
+  import { map } from "../../stores/googleMapsStore";
 
   let loading = true;
   let successful = false;
@@ -15,6 +18,9 @@
     successful = googleMapsLoader.status === LoaderStatus.SUCCESS;
     map.set(new google.maps.Map(document.getElementById("map")));
   });
+  setContext<IGeocodingService>("geocoding", new GeocodeGeocodingService());
+  loading = false;
+  successful = true;
 </script>
 
 {#if loading}

@@ -4,17 +4,17 @@
     ButtonGroup,
     Helper,
     Input,
+    Label,
     Modal,
+    Select,
     Spinner,
     Tooltip,
   } from "flowbite-svelte";
+  import { getContext } from "svelte";
   import { MapPin } from "svelte-heros-v2";
-  import {
-    getLocationFromZipcode,
-    getZipcodeFromLocation,
-  } from "../../services/GeocodingService";
+  import { countries } from "../../resources/country-list";
+  import type { IGeocodingService } from "../../services/IGeocodingService";
   import { cacheLocation, localStorage } from "../../stores/localStorageStore";
-
   // External LatLng of the user's location
   let userLocation = $localStorage.location.latlng;
   export let open = false;
@@ -38,6 +38,7 @@
   };
 
   // Internal state variables
+  const geocodingService = getContext<IGeocodingService>("geocoding");
   let verifiedZipcode = $localStorage.location.zipcode;
   $: userEnteredZipcode = verifiedZipcode;
   let zipcodeError = zipcodeErrors.NONE;
@@ -60,7 +61,9 @@
               lat: location.coords.latitude,
               lng: location.coords.longitude,
             };
-            const zipcode = await getZipcodeFromLocation(userLocation);
+            const zipcode = await geocodingService.getZipcodeFromLocation(
+              userLocation
+            );
 
             // If there is a zipcode
             if (zipcode) {
@@ -114,7 +117,10 @@
     try {
       // Geocode the user's location  from their zipcode
 
-      const location = await getLocationFromZipcode(userEnteredZipcode);
+      const location = await geocodingService.getLocationFromZipcode(
+        userEnteredZipcode,
+        countryCode
+      );
 
       verifiedZipcode = userEnteredZipcode;
 
@@ -136,31 +142,51 @@
       loadingZipcodeVerification = false;
     }
   }
+
+  let countryCode = countries[0].countryCode;
 </script>
 
 <Modal title="Update Location" bind:open autoclose={false}>
   <div>
-    <ButtonGroup class="w-full">
-      <Input
-        type="text"
-        placeholder="Enter Zipcode..."
-        bind:value={userEnteredZipcode}
-        color={zipcodeError === zipcodeErrors.NONE ? "base" : "red"}
-        disabled={disableFields}
-      />
-      <Button
-        on:click={geolocateZipcode}
-        color="primary"
-        disabled={disableFields}
-      >
-        {#if loadingGeolocation}
-          <Spinner color="gray" size="6" />
-        {:else}
-          <MapPin />
-        {/if}
-      </Button>
-      <Tooltip placement="bottom">Use My Location</Tooltip>
-    </ButtonGroup>
+    <Label>
+      Country
+      <Select class="mt-1" bind:value={countryCode}>
+        {#each countries as { countryCode, name, icon }}
+          <option value={countryCode}>
+            {icon}
+            &nbsp;
+            {name}
+          </option>
+        {/each}
+      </Select>
+    </Label>
+
+    <div class="mt-4">
+      <Label for="input-zipcode">Zipcode</Label>
+      <ButtonGroup class="w-full mt-1">
+        <Input
+          type="text"
+          placeholder="Enter Zipcode..."
+          bind:value={userEnteredZipcode}
+          color={zipcodeError === zipcodeErrors.NONE ? "base" : "red"}
+          disabled={disableFields}
+          id="input-zipcode"
+        />
+        <Button
+          on:click={geolocateZipcode}
+          color="primary"
+          disabled={disableFields}
+        >
+          {#if loadingGeolocation}
+            <Spinner color="gray" size="6" />
+          {:else}
+            <MapPin />
+          {/if}
+        </Button>
+        <Tooltip placement="bottom">Use My Location</Tooltip>
+      </ButtonGroup>
+    </div>
+
     <!-- Error or Helper Text -->
     <Helper
       class="mt-2"
