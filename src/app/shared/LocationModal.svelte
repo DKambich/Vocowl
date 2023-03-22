@@ -12,6 +12,7 @@
   } from "flowbite-svelte";
   import { getContext } from "svelte";
   import { MapPin } from "svelte-heros-v2";
+  import { GEOCODE_SERVICE } from "../../constants";
   import { countries } from "../../resources/country-list";
   import type { IGeocodingService } from "../../services/IGeocodingService";
   import { cacheLocation, localStorage } from "../../stores/localStorageStore";
@@ -38,7 +39,7 @@
   };
 
   // Internal state variables
-  const geocodingService = getContext<IGeocodingService>("geocoding");
+  const geocodingService = getContext<IGeocodingService>(GEOCODE_SERVICE);
   let verifiedZipcode = $localStorage.location.zipcode;
   $: userEnteredZipcode = verifiedZipcode;
   let zipcodeError = zipcodeErrors.NONE;
@@ -116,7 +117,6 @@
     loadingZipcodeVerification = true;
     try {
       // Geocode the user's location  from their zipcode
-
       const location = await geocodingService.getLocationFromZipcode(
         userEnteredZipcode,
         countryCode

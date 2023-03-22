@@ -76,7 +76,6 @@ export class HerePOIService implements IPOIService {
     location: LatLng,
     options?: { radius?: number }
   ): Promise<ServiceResponse<Restaurant[]>> {
-    console.log(options.radius);
     const SEARCH_RADIUS_METERS = Math.round(options.radius ?? 8047);
     const QUERY = new URLSearchParams({
       apiKey: HERE_API_KEY,

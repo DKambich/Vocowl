@@ -119,11 +119,9 @@
     {/if}
   </Button>
 </form>
-{#if $errors.search}
-  <Helper class="mt-2 mb-4" color="red">
-    {$errors.search}
-  </Helper>
-{/if}
+<Helper class="mt-2 mb-4" color="red">
+  {$errors.search}
+</Helper>
 
 <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
   {#each searchResults as result}
