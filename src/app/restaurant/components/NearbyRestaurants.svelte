@@ -139,11 +139,9 @@
     // });
   }
 
-  function centerMapOnRestaurant({ location }: Restaurant) {
-    // Move the map to center on the restaurant location
-    nearbyLMap?.setView(location);
-    // Increase zoom level on restaurant location
-    nearbyLMap?.setZoom(16);
+  function centerMapOnRestaurant(restaurant: Restaurant) {
+    // Move the map and increase zoom level to center on the restaurant location
+    nearbyLMap?.flyTo(restaurant.location, 16);
   }
 
   function addMapRestaurant(restaurant: Restaurant) {
