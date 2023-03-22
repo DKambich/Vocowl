@@ -243,16 +243,15 @@
               Fine Dining
             </Checkbox>
           </div>
-
-          <Button
-            color="primary"
-            disabled={!nearbyLMap}
-            on:click={loadNearbyRestaurants}
-          >
-            Run Search
-          </Button>
         </div>
       </AccordionItem>
     </Accordion>
+    <Button
+      color="primary"
+      disabled={!nearbyLMap}
+      on:click={loadNearbyRestaurants}
+    >
+      Search
+    </Button>
   </div>
 </div>
