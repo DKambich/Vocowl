@@ -8,6 +8,9 @@ export const HOME_ROUTE: string = "/",
 export const MILES_TO_METERS = 1609.344;
 export const METERS_TO_MILES = 0.0006213712;
 
+export const GEOCODE_SERVICE = "geocode";
+export const POI_SERVICE = "poi";
+
 export const TABS_ACTIVE_CLASS =
   "p-4 text-primary-600 bg-gray-100 rounded-t-lg dark:bg-gray-800 dark:text-primary-500";
 

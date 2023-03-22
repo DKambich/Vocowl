@@ -1,15 +1,17 @@
 <script lang="ts">
   import { Loader, LoaderStatus } from "@googlemaps/js-api-loader";
   import { setContext } from "svelte";
-  import { GOOGLE_MAPS_API_KEY } from "../../credentials";
-  import { GeocodeGeocodingService } from "../../services/GeocodingService";
+  import { GEOCODE_SERVICE, POI_SERVICE } from "../../constants";
+  import { GeocodeGeocodingService } from "../../services/GeocodeGeocodingService";
+  import { HerePOIService } from "../../services/HerePOIService";
   import type { IGeocodingService } from "../../services/IGeocodingService";
+  import type { IPOIService } from "../../services/IPOIService";
   import { map } from "../../stores/googleMapsStore";
 
   let loading = true;
   let successful = false;
   var googleMapsLoader = new Loader({
-    apiKey: GOOGLE_MAPS_API_KEY,
+    apiKey: "",
     libraries: ["places"],
   });
 
@@ -18,7 +20,9 @@
     successful = googleMapsLoader.status === LoaderStatus.SUCCESS;
     map.set(new google.maps.Map(document.getElementById("map")));
   });
-  setContext<IGeocodingService>("geocoding", new GeocodeGeocodingService());
+  setContext<IGeocodingService>(GEOCODE_SERVICE, new GeocodeGeocodingService());
+  setContext<IPOIService>(POI_SERVICE, new HerePOIService());
+
   loading = false;
   successful = true;
 </script>

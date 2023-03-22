@@ -8,7 +8,7 @@ export type Restaurant = {
   name: string;
   address?: string;
   location?: LatLng;
-  source: "custom" | "google";
+  source: "custom" | "google" | "here";
 };
 
 export type LocalStorage = {
@@ -83,3 +83,5 @@ export type ManualPlaceFormErrors = {
   city?: string;
   state?: string;
 };
+
+export type ServiceResponse<T> = [T, string];

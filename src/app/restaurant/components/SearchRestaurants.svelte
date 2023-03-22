@@ -1,9 +1,10 @@
 <script lang="ts">
   import { Button, Card, Helper, Input, Spinner } from "flowbite-svelte";
+  import { getContext } from "svelte";
   import { createForm } from "svelte-forms-lib";
   import { MagnifyingGlass } from "svelte-heros-v2";
-  import { MILES_TO_METERS } from "../../../constants";
-  import { queryNearbyRestaurants } from "../../../services/GoogleMapsService";
+  import { POI_SERVICE } from "../../../constants";
+  import type { IPOIService } from "../../../services/IPOIService";
   import {
     addRestaurant,
     localStorage,
@@ -11,35 +12,59 @@
   } from "../../../stores/localStorageStore";
   import { showToast } from "../../../stores/toastStore";
   import type {
+    LatLng,
     PlacesSearchFormErrors,
     PlacesSearchFormValues,
     Restaurant,
-    SearchPlacesResponse,
   } from "../../../types";
 
-  export let location: google.maps.LatLngLiteral;
+  // External Variables
+  export let location: LatLng;
 
-  let searchResults: google.maps.places.PlaceResult[] = [];
+  // Search Related Variables
+  const poiService = getContext<IPOIService>(POI_SERVICE);
+  let searchResults: Restaurant[] = [];
   let isSearchLoading = false;
-  $: locationEmpty = !location;
 
-  $: savedRestaurants = $localStorage.restaurants;
-
+  // Form Variables
   const formValues: PlacesSearchFormValues = {
     search: "",
   };
 
   const { errors, handleChange, handleSubmit } = createForm({
     initialValues: formValues,
-    validate: validateForm,
     onSubmit: submitForm,
+    validate: validateForm,
   });
+
+  // Reactive Variables
+  $: locationEmpty = !location;
+  $: savedRestaurants = $localStorage.restaurants;
 
   $: if (locationEmpty) {
     $errors.search =
-      "Cannot search until a location has been provided. Please update your location.";
+      "You must provide a location to search for restaurants. Please update your location.";
   } else {
     $errors.search = "";
+  }
+
+  async function submitForm({ search }: PlacesSearchFormValues) {
+    isSearchLoading = true;
+    const [restaurants, error] = await poiService.getQueriedRestaurants(
+      search,
+      location
+    );
+    isSearchLoading = false;
+    if (error) {
+      // TODO: Handle error better
+      console.error(error);
+      showToast({
+        message: "Something went wrong. Please try again.",
+        type: "error",
+      });
+    } else {
+      searchResults = restaurants;
+    }
   }
 
   function validateForm(values: PlacesSearchFormValues) {
@@ -50,61 +75,25 @@
     return errors;
   }
 
-  function submitForm({ search }: PlacesSearchFormValues) {
-    isSearchLoading = true;
-    queryNearbyRestaurants({
-      query: search,
-      location: location,
-      callback: handleSearchResults,
-      radius: MILES_TO_METERS * 10,
+  function addQueriedRestaurant(restaurant: Restaurant) {
+    addRestaurant(restaurant);
+    showToast({
+      message: `Added ${restaurant.name}`,
+      type: "success",
+      timeout: 2000,
     });
   }
 
-  function handleSearchResults({ results, status }: SearchPlacesResponse) {
-    if (status === google.maps.places.PlacesServiceStatus.OK) {
-      searchResults = results.filter((result) =>
-        result.types.includes("restaurant")
-      );
-    } else {
-      showToast({
-        message: "There was an error. Please try again",
-        type: "error",
-        timeout: 3000,
-      });
-    }
-    isSearchLoading = false;
+  function removeQueriedRestaurant(restaurant: Restaurant) {
+    removeRestaurant(restaurant);
+    showToast({
+      message: `Removed ${restaurant.name}`,
+      type: "success",
+      timeout: 2000,
+    });
   }
 
-  function addGoogleRestaurant(
-    googleRestaurant: google.maps.places.PlaceResult
-  ) {
-    const {
-      name,
-      formatted_address,
-      place_id,
-      geometry: { location },
-    } = googleRestaurant;
-
-    const restaurant: Restaurant = {
-      id: place_id,
-      name: name,
-      address: formatted_address,
-      location: { lat: location.lat(), lng: location.lng() },
-      source: "google",
-    };
-
-    addRestaurant(restaurant);
-    showToast({ message: `Added ${name}`, type: "success", timeout: 2000 });
-  }
-
-  function removeGoogleRestaurant(
-    googleRestaurant: google.maps.places.PlaceResult
-  ) {
-    const { name, place_id } = googleRestaurant;
-
-    removeRestaurant(place_id);
-    showToast({ message: `Removed ${name}`, type: "success", timeout: 2000 });
-  }
+  let searchRadius = 5;
 </script>
 
 <form class="flex gap-2" on:submit={handleSubmit}>
@@ -130,11 +119,13 @@
     {/if}
   </Button>
 </form>
-<Helper class="my-2" color="red">
-  {$errors.search}
-</Helper>
+{#if $errors.search}
+  <Helper class="mt-2 mb-4" color="red">
+    {$errors.search}
+  </Helper>
+{/if}
 
-<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+<div class="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
   {#each searchResults as result}
     <Card size="lg">
       <div class="grow">
@@ -146,15 +137,15 @@
         <address
           class="font-normal text-gray-700 dark:text-gray-400 leading-tight"
         >
-          {result.formatted_address}
+          {result.address}
         </address>
       </div>
-      {#if !savedRestaurants.find((restaurant) => restaurant.id === result.place_id)}
+      {#if !savedRestaurants.find((restaurant) => restaurant.id === result.id)}
         <Button
           color="primary"
           size="sm"
           class="w-full mt-2"
-          on:click={() => addGoogleRestaurant(result)}
+          on:click={() => addQueriedRestaurant(result)}
           disabled={isSearchLoading}
         >
           Add Restaurant
@@ -163,7 +154,7 @@
           color="red"
           size="sm"
           class="w-full mt-2"
-          on:click={() => removeGoogleRestaurant(result)}
+          on:click={() => removeQueriedRestaurant(result)}
           disabled={isSearchLoading}
         >
           Remove Restaurant

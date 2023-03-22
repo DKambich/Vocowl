@@ -29,15 +29,21 @@
           class="flex items-center gap-1 md:gap-2 font-bold text-lg tracking-tight"
         >
           <div>
-            {#if restaurant.source === "google"}
+            {#if restaurant.source !== "custom"}
               <GlobeAlt />
-            {:else if restaurant.source === "custom"}
+            {:else}
               <UserCircle />
             {/if}
           </div>
           {restaurant.name}
         </div>
-        <div class="gap-2">
+        <div>
+          <a href={generateGoogleMapsURL(restaurant)} target="_blank">
+            {restaurant.address}
+          </a>
+        </div>
+
+        <div class="flex gap-2">
           <Button
             color="primary"
             href={generateGoogleMapsURL(restaurant)}

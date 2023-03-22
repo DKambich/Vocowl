@@ -2,22 +2,23 @@
   import {
     Accordion,
     AccordionItem,
+    Button,
     Checkbox,
     Label,
     Listgroup,
     ListgroupItem,
-    Radio,
     Range,
   } from "flowbite-svelte";
   import * as Leaflet from "leaflet";
-  import { afterUpdate } from "svelte";
+  import { afterUpdate, getContext } from "svelte";
   import {
     MagnifyingGlass,
     MapPin,
     MinusCircle,
     PlusCircle,
   } from "svelte-heros-v2";
-  import { MILES_TO_METERS } from "../../../constants";
+  import { MILES_TO_METERS, POI_SERVICE } from "../../../constants";
+  import type { IPOIService } from "../../../services/IPOIService";
   import {
     addRestaurant,
     localStorage,
@@ -54,6 +55,8 @@
   let rankBy = RANK_PROMINENCE;
   let openNow = true;
   $: savedRestaurants = $localStorage.restaurants;
+
+  const poiService = getContext<IPOIService>(POI_SERVICE);
 
   // Update map center and search radius center when location changes
   $: if (userLocation != cachedLocation) {
@@ -94,18 +97,38 @@
         radius: searchRadius * MILES_TO_METERS,
       }).addTo(nearbyLMap);
       Leaflet.marker(userLocation).addTo(nearbyLMap);
-      loadNearbyRestaurants();
+      // loadNearbyRestaurants();
     }
   });
 
-  function loadNearbyRestaurants() {
+  async function loadNearbyRestaurants() {
     // Clear nearby restaurants
     nearbyRestaurants = [];
     // Remove existing markers from map and clear markers
-    nearbyMarkers = [];
+    nearbyMarkers.forEach((marker) => marker.remove());
 
-    nearbyRestaurants = [];
     // Fetch the nearby restaurants based on current options
+    const [restaurants, error] = await poiService.getNearbyRestaurants(
+      userLocation,
+      { radius: searchRadius * MILES_TO_METERS }
+    );
+
+    if (error) {
+      // TODO: Handle error better
+      console.error(error);
+      showToast({
+        message: "Something went wrong. Please try again.",
+        type: "error",
+      });
+    } else {
+      nearbyRestaurants = restaurants;
+      nearbyMarkers = [
+        ...restaurants.map(({ location }) =>
+          Leaflet.marker(location).addTo(nearbyLMap)
+        ),
+      ];
+    }
+
     // getNearbyRestaurants({
     //   map: nearbyMap,
     //   location: userLocation,
@@ -191,7 +214,7 @@
         </div>
       {/each}
       {#if nearbyRestaurants.length === 0}
-        <IconMessage class="pt-4" icon={MagnifyingGlass} size="sm">
+        <IconMessage class="py-4" icon={MagnifyingGlass} size="sm">
           No Results Found...
         </IconMessage>
       {/if}
@@ -199,26 +222,36 @@
     <Accordion flush>
       <AccordionItem>
         <span slot="header">Search Options</span>
-        <Label>Search Radius: {searchRadius} miles</Label>
-        <Range
-          min="1"
-          max="10"
-          bind:value={searchRadius}
-          on:change={loadNearbyRestaurants}
-          disabled={!nearbyLMap}
-        />
-        <Label>Rank Results By</Label>
-        <ul class="items-center w-full rounded-lg  sm:flex ">
-          <Radio bind:group={rankBy} value={RANK_PROMINENCE} class="w-full">
-            Prominence
-          </Radio>
-          <Radio bind:group={rankBy} value={RANK_DISTANCE} class="w-full">
-            Distance
-          </Radio>
-        </ul>
-        <Checkbox checked={openNow} on:click={() => (openNow = !openNow)}>
-          Open Now
-        </Checkbox>
+        <div class="flex flex-col gap-4 items-stretch">
+          <div>
+            <Label>Search Radius ({searchRadius} miles)</Label>
+            <Range
+              min="1"
+              max="10"
+              bind:value={searchRadius}
+              disabled={!nearbyLMap}
+            />
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <Checkbox checked={openNow} on:click={() => (openNow = !openNow)}>
+              Fast Food
+            </Checkbox>
+            <Checkbox checked={openNow} on:click={() => (openNow = !openNow)}>
+              Casual Dining
+            </Checkbox>
+            <Checkbox checked={openNow} on:click={() => (openNow = !openNow)}>
+              Fine Dining
+            </Checkbox>
+          </div>
+
+          <Button
+            color="primary"
+            disabled={!nearbyLMap}
+            on:click={loadNearbyRestaurants}
+          >
+            Run Search
+          </Button>
+        </div>
       </AccordionItem>
     </Accordion>
   </div>

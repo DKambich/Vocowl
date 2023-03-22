@@ -55,7 +55,7 @@
     Selected Restaurants
   </div>
   {#if restaurantOptions.length === 0}
-    <IconMessage class="pt-8" icon={BuildingStorefront} size="lg">
+    <IconMessage class="py-8" icon={BuildingStorefront} size="lg">
       No restaurants added...
     </IconMessage>
   {/if}

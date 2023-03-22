@@ -78,13 +78,12 @@
       id: GUID(),
       source: "custom",
     };
-    console.log(customRestaurant);
+
     formValues.restaurant = "";
     formValues.address1 = "";
     formValues.address2 = "";
     formValues.city = "";
     formValues.state = "";
-    state;
 
     addRestaurant(customRestaurant);
     showToast({

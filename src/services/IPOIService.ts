@@ -1,5 +1,4 @@
-import type { Restaurant } from "../app/restaurant";
-import type { LatLng } from "../types";
+import type { LatLng, Restaurant, ServiceResponse } from "../types";
 
 type POISearchOptions = {
   radius?: number;
@@ -10,10 +9,10 @@ export interface IPOIService {
     query: string,
     location: LatLng,
     options?: POISearchOptions
-  ) => Promise<Restaurant[]>;
+  ) => Promise<ServiceResponse<Restaurant[]>>;
 
   getNearbyRestaurants: (
     location: LatLng,
     options?: POISearchOptions
-  ) => Promise<Restaurant[]>;
+  ) => Promise<ServiceResponse<Restaurant[]>>;
 }
