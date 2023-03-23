@@ -1,5 +1,8 @@
 <script lang="ts">
   import { Loader, LoaderStatus } from "@googlemaps/js-api-loader";
+  import L from "leaflet";
+  import icon from "leaflet/dist/images/marker-icon.png";
+  import iconShadow from "leaflet/dist/images/marker-shadow.png";
   import { setContext } from "svelte";
   import { GEOCODE_SERVICE, POI_SERVICE } from "../../constants";
   import { GeocodeGeocodingService } from "../../services/GeocodeGeocodingService";
@@ -7,6 +10,19 @@
   import type { IGeocodingService } from "../../services/IGeocodingService";
   import type { IPOIService } from "../../services/IPOIService";
   import { map } from "../../stores/googleMapsStore";
+
+  // Override default marker icon so it loads correctly
+  let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41],
+  });
+
+  L.Marker.prototype.options.icon = DefaultIcon;
 
   let loading = true;
   let successful = false;

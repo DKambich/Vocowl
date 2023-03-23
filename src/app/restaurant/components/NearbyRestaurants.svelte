@@ -46,13 +46,10 @@
   );
 
   let nearbyRestaurants: Restaurant[] = [];
-  let nearbyMarkers: L.Marker[] = [];
+  let nearbyMarkers: Leaflet.Marker[] = [];
 
   // Internal Search Options state variables
   let searchRadius = 5;
-  const RANK_DISTANCE = google.maps.places.RankBy.DISTANCE.toString();
-  const RANK_PROMINENCE = google.maps.places.RankBy.PROMINENCE.toString();
-  let rankBy = RANK_PROMINENCE;
   let openNow = true;
   $: savedRestaurants = $localStorage.restaurants;
 
@@ -96,7 +93,7 @@
         fillOpacity: 0.35,
         radius: searchRadius * MILES_TO_METERS,
       }).addTo(nearbyLMap);
-      Leaflet.marker(userLocation).addTo(nearbyLMap);
+      console.log(Leaflet.marker(userLocation).addTo(nearbyLMap));
       // loadNearbyRestaurants();
     }
   });
