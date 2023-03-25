@@ -8,11 +8,13 @@
     Toggle,
   } from "flowbite-svelte";
   import { createForm } from "svelte-forms-lib";
+  import { MapPin } from "svelte-heros-v2";
   import { fade } from "svelte/transition";
   import { US_STATES } from "../../../constants";
   import { addRestaurant } from "../../../stores/localStorageStore";
   import { showToast } from "../../../stores/toastStore";
   import type {
+    Address,
     LatLng,
     ManualPlaceFormErrors,
     ManualPlaceFormValues,
@@ -37,13 +39,15 @@
     address2: "",
     city: "",
     state: "",
+    zipcode: "",
   };
 
-  const { errors, handleReset, handleChange, handleSubmit } = createForm({
-    initialValues: formValues,
-    validate: validateForm,
-    onSubmit: submitForm,
-  });
+  const { errors, handleReset, handleChange, handleSubmit, updateField } =
+    createForm({
+      initialValues: formValues,
+      validate: validateForm,
+      onSubmit: submitForm,
+    });
 
   function validateForm(values: ManualPlaceFormValues) {
     let errors: ManualPlaceFormErrors = {};
@@ -60,6 +64,9 @@
       if (values.state === "") {
         errors.state = "State is required";
       }
+      if (values.zipcode === "") {
+        errors.zipcode = "Zipcode is required";
+      }
     }
     return errors;
   }
@@ -69,6 +76,25 @@
     $errors.address1 = "";
     $errors.city = "";
     $errors.state = "";
+    $errors.zipcode = "";
+  }
+
+  function handleLocatedAddress(address: Address, location: LatLng) {
+    formValues.address1 = address.address1;
+    updateField("address1", address.address1);
+
+    formValues.address2 = address.address2;
+    updateField("address2", address.address2);
+
+    formValues.city = address.city;
+    updateField("city", address.city);
+
+    const test = states.find((state) => state.name === address.state);
+    formValues.state = test.value;
+    updateField("state", test.value);
+
+    formValues.zipcode = address.zipcode;
+    updateField("zipcode", address.zipcode);
   }
 
   function submitForm({
@@ -77,10 +103,13 @@
     address2,
     city,
     state,
+    zipcode,
   }: ManualPlaceFormValues) {
     const customRestaurant: Restaurant = {
       name: restaurant,
-      address: `${address1} ${address2}, ${city}, ${state}`,
+      address: `${address1}${
+        address2 ? " " + address2 : ""
+      }, ${city}, ${state} ${zipcode}`,
       id: GUID(),
       source: "custom",
     };
@@ -90,6 +119,7 @@
     formValues.address2 = "";
     formValues.city = "";
     formValues.state = "";
+    formValues.zipcode = "";
 
     addRestaurant(customRestaurant);
     showToast({
@@ -100,7 +130,7 @@
   }
 </script>
 
-<form on:submit|preventDefault={handleSubmit}>
+<form on:submit|preventDefault={handleSubmit} class="flex flex-col">
   <div class="mb-6">
     <Label for="restaurant" class="mb-2">
       Restaurant <span class="text-red-600 font-bold">*</span>
@@ -188,18 +218,42 @@
           </Helper>
         {/if}
       </div>
+      <div>
+        <Label for="zipcode" class="mb-2">
+          Zipcode <span class="text-red-600 font-bold">*</span>
+        </Label>
+        <Input
+          type="text"
+          name="zipcode"
+          id="zipcode"
+          bind:value={formValues.zipcode}
+          on:change={handleChange}
+        />
+        {#if $errors.zipcode}
+          <Helper class="mt-2" color="red">
+            {$errors.zipcode}
+          </Helper>
+        {/if}
+      </div>
+      <div>
+        <Label class="mb-2 opacity-0">Hidden</Label>
+        <Button
+          color="primary"
+          class="w-full "
+          on:click={() => (showPlacePicker = true)}
+        >
+          <MapPin class="mr-1" />
+          Locate An Address
+        </Button>
+      </div>
     </div>
   {/if}
 
-  <Button type="submit" color="primary" class="w-full md:w-max">
-    Add Restaurant
-  </Button>
-  <Button color="primary" on:click={() => (showPlacePicker = true)}
-    >Pick Address</Button
-  >
+  <Button type="submit" color="primary" class="w-full md:w-auto">Submit</Button>
 
   <PlacePickerModal
     initialLocation={userLocation}
+    onLocationSelected={handleLocatedAddress}
     bind:open={showPlacePicker}
   />
 </form>

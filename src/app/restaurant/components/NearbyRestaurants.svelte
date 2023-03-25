@@ -10,7 +10,7 @@
     Range,
   } from "flowbite-svelte";
   import * as Leaflet from "leaflet";
-  import { afterUpdate, getContext } from "svelte";
+  import { afterUpdate, getContext, onDestroy } from "svelte";
   import {
     MagnifyingGlass,
     MapPin,
@@ -124,16 +124,11 @@
         ),
       ];
     }
-
-    // getNearbyRestaurants({
-    //   map: nearbyMap,
-    //   location: userLocation,
-    //   rankBy: parseInt(rankBy),
-    //   openNow: openNow,
-    //   radius: searchRadius * MILES_TO_METERS,
-    //   callback: handleNearbyRestaurants,
-    // });
   }
+
+  onDestroy(() => {
+    nearbyLMap.remove();
+  });
 
   function centerMapOnRestaurant(restaurant: Restaurant) {
     // Move the map and increase zoom level to center on the restaurant location

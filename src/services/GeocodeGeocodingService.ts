@@ -1,4 +1,4 @@
-import type { LatLng } from "../types";
+import type { Address, LatLng, ServiceResponse } from "../types";
 import type { IGeocodingService } from "./IGeocodingService";
 
 type ReverseGeocodeResult = {
@@ -38,6 +38,37 @@ type GeocodeResult = {
 
 export class GeocodeGeocodingService implements IGeocodingService {
   private BASE_URL = "https://geocode.maps.co/";
+
+  async getAddressFromLocation(
+    location: LatLng
+  ): Promise<ServiceResponse<Address>> {
+    const REVERSE_GEOCODE_URL = `${this.BASE_URL}/reverse`;
+    const QUERY = new URLSearchParams({
+      lat: location.lat.toString(),
+      lon: location.lng.toString(),
+    }).toString();
+
+    try {
+      const response = await fetch(`${REVERSE_GEOCODE_URL}?${QUERY}`);
+      if (response.ok) {
+        const json: ReverseGeocodeResult = await response.json();
+
+        const address = {
+          address1: json.address.road,
+          address2: "",
+          city: json.address.town,
+          state: json.address.state,
+          zipcode: json.address.postcode,
+        };
+
+        return [address, null];
+      } else {
+        return [null, response.statusText];
+      }
+    } catch (error) {
+      return [null, error];
+    }
+  }
 
   async getZipcodeFromLocation(location: LatLng): Promise<string> {
     const REVERSE_GEOCODE_URL = `${this.BASE_URL}/reverse`;

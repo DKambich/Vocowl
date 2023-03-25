@@ -11,6 +11,14 @@ export type Restaurant = {
   source: "custom" | "google" | "here";
 };
 
+export type Address = {
+  address1: string;
+  address2?: string;
+  city: string;
+  state: string;
+  zipcode: string;
+};
+
 export type LocalStorage = {
   useDarkTheme: boolean;
   restaurants: Restaurant[];
@@ -74,6 +82,7 @@ export type ManualPlaceFormValues = {
   address2: string;
   city: string;
   state: string;
+  zipcode: string;
 };
 
 export type ManualPlaceFormErrors = {
@@ -82,6 +91,7 @@ export type ManualPlaceFormErrors = {
   address2?: string;
   city?: string;
   state?: string;
+  zipcode?: string;
 };
 
 export type ServiceResponse<T> = [T, string];

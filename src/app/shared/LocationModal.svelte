@@ -6,7 +6,6 @@
     Input,
     Label,
     Modal,
-    Select,
     Spinner,
     Tooltip,
   } from "flowbite-svelte";
@@ -147,46 +146,30 @@
 </script>
 
 <Modal title="Update Location" bind:open autoclose={false}>
-  <div>
-    <Label>
-      Country
-      <Select class="mt-1" bind:value={countryCode}>
-        {#each countries as { countryCode, name, icon }}
-          <option value={countryCode}>
-            {icon}
-            &nbsp;
-            {name}
-          </option>
-        {/each}
-      </Select>
-    </Label>
-
-    <div class="mt-4">
-      <Label for="input-zipcode">Zipcode</Label>
-      <ButtonGroup class="w-full mt-1">
-        <Input
-          type="text"
-          placeholder="Enter Zipcode..."
-          bind:value={userEnteredZipcode}
-          color={zipcodeError === zipcodeErrors.NONE ? "base" : "red"}
-          disabled={disableFields}
-          id="input-zipcode"
-        />
-        <Button
-          on:click={geolocateZipcode}
-          color="primary"
-          disabled={disableFields}
-        >
-          {#if loadingGeolocation}
-            <Spinner color="gray" size="6" />
-          {:else}
-            <MapPin />
-          {/if}
-        </Button>
-        <Tooltip placement="bottom">Use My Location</Tooltip>
-      </ButtonGroup>
-    </div>
-
+  <div class="w-80">
+    <Label for="input-zipcode">Zipcode</Label>
+    <ButtonGroup class="w-full mt-1">
+      <Input
+        type="text"
+        placeholder="Enter Zipcode..."
+        bind:value={userEnteredZipcode}
+        color={zipcodeError === zipcodeErrors.NONE ? "base" : "red"}
+        disabled={disableFields}
+        id="input-zipcode"
+      />
+      <Button
+        on:click={geolocateZipcode}
+        color="primary"
+        disabled={disableFields}
+      >
+        {#if loadingGeolocation}
+          <Spinner color="gray" size="6" />
+        {:else}
+          <MapPin />
+        {/if}
+      </Button>
+      <Tooltip placement="bottom">Use My Location</Tooltip>
+    </ButtonGroup>
     <!-- Error or Helper Text -->
     <Helper
       class="mt-2"
@@ -210,6 +193,7 @@
       </span>
     </Helper>
   </div>
+
   <svelte:fragment slot="footer">
     <Button
       on:click={verifyandSetManualZipcode}

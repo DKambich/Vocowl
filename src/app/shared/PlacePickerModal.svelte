@@ -1,16 +1,22 @@
 <script lang="ts">
   import { Button, Modal } from "flowbite-svelte";
   import * as Leaflet from "leaflet";
-  import type { LatLng } from "../../types";
+  import { getContext } from "svelte";
+  import { GEOCODE_SERVICE } from "../../constants";
+  import type { IGeocodingService } from "../../services/IGeocodingService";
+  import type { Address, LatLng } from "../../types";
 
   export let initialLocation: LatLng;
   export let open = true;
+  export let onLocationSelected = (address: Address, location: LatLng) => {};
 
   let leafletMap: Leaflet.Map;
   let placeMarker: Leaflet.Marker;
   let placeInfoControl: Leaflet.Control & {
     setDisplayedCoordinates: (coords: LatLng) => void;
   };
+
+  const geocodeService = getContext<IGeocodingService>(GEOCODE_SERVICE);
 
   let selectedLatLng: LatLng;
 
@@ -29,14 +35,14 @@
   });
 
   function createMap(container) {
-    let startingLocation = initialLocation ?? {
+    selectedLatLng = initialLocation ?? {
       lat: 39.5,
       lng: -98.34,
     };
     let startingZoom = initialLocation ? 12 : 4;
 
     leafletMap = Leaflet.map(container, { preferCanvas: true }).setView(
-      startingLocation,
+      selectedLatLng,
       startingZoom
     );
 
@@ -47,7 +53,7 @@
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(leafletMap);
 
-    placeMarker = Leaflet.marker(startingLocation, {
+    placeMarker = Leaflet.marker(selectedLatLng, {
       riseOnHover: true,
       draggable: true,
     }).addTo(leafletMap);
@@ -55,7 +61,7 @@
     placeInfoControl = new PlaceInfoControl({
       position: "bottomleft",
     }).addTo(leafletMap);
-    placeInfoControl.setDisplayedCoordinates(startingLocation);
+    placeInfoControl.setDisplayedCoordinates(selectedLatLng);
 
     leafletMap.on("click", (clickEvent) => {
       selectedLatLng = clickEvent.latlng;
@@ -80,20 +86,32 @@
     };
   }
 
-  function pickPlace() {}
+  async function pickPlace() {
+    const [address, error] = await geocodeService.getAddressFromLocation(
+      selectedLatLng
+    );
+    if (error) {
+      // TODO: Handle error
+    } else {
+      onLocationSelected(address, selectedLatLng);
+      open = false;
+    }
+  }
+
+  function reset() {
+    selectedLatLng = null;
+  }
 </script>
 
-{#if open}
-  <Modal title="Place Picker" size="xl" bind:open autoclose>
-    <div
-      class="w-[80vw] md:w-[700px] lg:w-[900px] xl:w-[1200px] h-[50vh]"
-      use:mapAction
-    />
-    <div slot="footer" class="font-bold">
-      <Button color="primary" on:click={pickPlace} disabled={!selectedLatLng}
-        >Set Location</Button
-      >
-      <Button color="alternative">Cancel</Button>
-    </div>
-  </Modal>
-{/if}
+<Modal title="Place Picker" size="xl" bind:open on:hide={reset}>
+  <div
+    class="w-[80vw] md:w-[700px] lg:w-[900px] xl:w-[1200px] h-[50vh]"
+    use:mapAction
+  />
+  <div slot="footer" class="font-bold">
+    <Button color="primary" on:click={pickPlace} disabled={!selectedLatLng}
+      >Set Location</Button
+    >
+    <Button color="alternative" on:click={() => (open = false)}>Close</Button>
+  </div>
+</Modal>
