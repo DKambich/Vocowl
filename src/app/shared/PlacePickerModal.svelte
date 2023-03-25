@@ -86,7 +86,7 @@
 {#if open}
   <Modal title="Place Picker" size="xl" bind:open autoclose>
     <div
-      class="w-96 md:w-[700px] lg:w-[900px] xl:w-[1200px] h-[50vh]"
+      class="w-[80vw] md:w-[700px] lg:w-[900px] xl:w-[1200px] h-[50vh]"
       use:mapAction
     />
     <div slot="footer" class="font-bold">
