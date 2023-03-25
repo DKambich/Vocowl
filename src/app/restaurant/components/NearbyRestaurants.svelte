@@ -155,7 +155,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
   <div
     id="nearbyMap"
-    class="col-span-1 lg:col-span-2 rounded-lg flex justify-center h-[50vh] z-10"
+    class="col-span-1 lg:col-span-2 rounded-lg flex justify-center h-[50vh] z-0"
   >
     {#if !nearbyLMap}
       <IconMessage icon={MapPin} size="xl">
