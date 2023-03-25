@@ -76,7 +76,7 @@
         <PencilSquare size="18" />
         <span class="hidden sm:block">Custom</span>
       </div>
-      <CustomRestaurants />
+      <CustomRestaurants {userLocation} />
     </TabItem>
     <Tooltip class="sm:hidden" placement="bottom">
       Add Custom Restaurant

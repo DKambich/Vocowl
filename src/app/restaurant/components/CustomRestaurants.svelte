@@ -13,16 +13,22 @@
   import { addRestaurant } from "../../../stores/localStorageStore";
   import { showToast } from "../../../stores/toastStore";
   import type {
+    LatLng,
     ManualPlaceFormErrors,
     ManualPlaceFormValues,
     Restaurant,
   } from "../../../types";
   import { GUID } from "../../../utilities";
+  import PlacePickerModal from "../../shared/PlacePickerModal.svelte";
 
   const states = US_STATES.map((state) => ({
     value: state.abbreviation,
     name: state.name,
   }));
+
+  export let userLocation: LatLng;
+
+  let showPlacePicker = false;
 
   let useAddressInput = false;
   const formValues: ManualPlaceFormValues = {
@@ -185,7 +191,15 @@
     </div>
   {/if}
 
-  <Button type="submit" color="primary" class="w-full md:w-max"
-    >Add Restaurant</Button
+  <Button type="submit" color="primary" class="w-full md:w-max">
+    Add Restaurant
+  </Button>
+  <Button color="primary" on:click={() => (showPlacePicker = true)}
+    >Pick Address</Button
   >
+
+  <PlacePickerModal
+    initialLocation={userLocation}
+    bind:open={showPlacePicker}
+  />
 </form>

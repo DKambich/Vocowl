@@ -83,7 +83,7 @@
 
   // After DOM has loaded, load in the the nearby search map and search radius
   afterUpdate(() => {
-    if (location && !nearbyLMap) {
+    if (userLocation && !nearbyLMap) {
       nearbyLMap = Leaflet.map("nearbyMap", { preferCanvas: true }).setView(
         userLocation,
         12
@@ -93,7 +93,6 @@
         fillOpacity: 0.35,
         radius: searchRadius * MILES_TO_METERS,
       }).addTo(nearbyLMap);
-      console.log(Leaflet.marker(userLocation).addTo(nearbyLMap));
       // loadNearbyRestaurants();
     }
   });
@@ -158,12 +157,6 @@
   }
 </script>
 
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-  crossorigin=""
-/>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
   <div
     id="nearbyMap"

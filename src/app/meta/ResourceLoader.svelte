@@ -3,6 +3,7 @@
   import L from "leaflet";
   import icon from "leaflet/dist/images/marker-icon.png";
   import iconShadow from "leaflet/dist/images/marker-shadow.png";
+  import "leaflet/dist/leaflet.css";
   import { setContext } from "svelte";
   import { GEOCODE_SERVICE, POI_SERVICE } from "../../constants";
   import { GeocodeGeocodingService } from "../../services/GeocodeGeocodingService";
