@@ -1,11 +1,11 @@
 <script lang="ts">
   import {
     Button,
+    Checkbox,
     Helper,
     Input,
     Label,
     Select,
-    Toggle,
   } from "flowbite-svelte";
   import { createForm } from "svelte-forms-lib";
   import { MapPin } from "svelte-heros-v2";
@@ -150,9 +150,9 @@
     {/if}
   </div>
   <div class="mb-6">
-    <Toggle checked={useAddressInput} on:click={toggleAddressInput}>
+    <Checkbox checked={useAddressInput} on:click={toggleAddressInput}>
       Add an Address
-    </Toggle>
+    </Checkbox>
   </div>
   {#if useAddressInput}
     <div class="grid gap-6 mb-6 md:grid-cols-2" transition:fade>
@@ -236,14 +236,14 @@
         {/if}
       </div>
       <div>
-        <Label class="mb-2 opacity-0">Hidden</Label>
+        <Label class="mb-2 opacity-0 hidden md:block">Hidden</Label>
         <Button
           color="primary"
           class="w-full "
           on:click={() => (showPlacePicker = true)}
         >
           <MapPin class="mr-1" />
-          Locate An Address
+          Locate Address
         </Button>
       </div>
     </div>
