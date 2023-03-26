@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Loader, LoaderStatus } from "@googlemaps/js-api-loader";
-  import L from "leaflet";
+  import * as Leaflet from "leaflet";
   import icon from "leaflet/dist/images/marker-icon.png";
   import iconShadow from "leaflet/dist/images/marker-shadow.png";
   import "leaflet/dist/leaflet.css";
@@ -10,10 +9,9 @@
   import { HerePOIService } from "../../services/HerePOIService";
   import type { IGeocodingService } from "../../services/IGeocodingService";
   import type { IPOIService } from "../../services/IPOIService";
-  import { map } from "../../stores/googleMapsStore";
 
   // Override default marker icon so it loads correctly
-  let DefaultIcon = L.icon({
+  let DefaultIcon = Leaflet.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
     iconSize: [25, 41],
@@ -23,20 +21,11 @@
     shadowSize: [41, 41],
   });
 
-  L.Marker.prototype.options.icon = DefaultIcon;
+  Leaflet.Marker.prototype.options.icon = DefaultIcon;
 
   let loading = true;
   let successful = false;
-  var googleMapsLoader = new Loader({
-    apiKey: "",
-    libraries: ["places"],
-  });
 
-  googleMapsLoader.load().then((google) => {
-    loading = false;
-    successful = googleMapsLoader.status === LoaderStatus.SUCCESS;
-    map.set(new google.maps.Map(document.getElementById("map")));
-  });
   setContext<IGeocodingService>(GEOCODE_SERVICE, new GeocodeGeocodingService());
   setContext<IPOIService>(POI_SERVICE, new HerePOIService());
 

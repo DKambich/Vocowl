@@ -12,7 +12,6 @@
   import { getContext } from "svelte";
   import { MapPin } from "svelte-heros-v2";
   import { GEOCODE_SERVICE } from "../../constants";
-  import { countries } from "../../resources/country-list";
   import type { IGeocodingService } from "../../services/IGeocodingService";
   import { cacheLocation, localStorage } from "../../stores/localStorageStore";
   // External LatLng of the user's location
@@ -117,8 +116,7 @@
     try {
       // Geocode the user's location  from their zipcode
       const location = await geocodingService.getLocationFromZipcode(
-        userEnteredZipcode,
-        countryCode
+        userEnteredZipcode
       );
 
       verifiedZipcode = userEnteredZipcode;
@@ -141,8 +139,6 @@
       loadingZipcodeVerification = false;
     }
   }
-
-  let countryCode = countries[0].countryCode;
 </script>
 
 <Modal title="Update Location" bind:open autoclose={false}>

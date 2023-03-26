@@ -7,14 +7,25 @@
     Trash,
     UserCircle,
   } from "svelte-heros-v2";
-  import { generateGoogleMapsURL } from "../../../services/GoogleMapsService";
   import {
     localStorage,
     removeRestaurant,
   } from "../../../stores/localStorageStore";
+  import type { Restaurant } from "../../../types";
   import { IconMessage } from "../../shared";
 
   $: restaurants = $localStorage.restaurants;
+
+  function generateGoogleMapsURL(restaurant: Restaurant) {
+    const url = "https://www.google.com/maps/search/?api=1";
+    let query = `&query=`;
+    query += `${restaurant.name}`;
+    if (restaurant.location) {
+      query += `+${restaurant.location.lat},${restaurant.location.lng}`;
+    }
+    query += `&query_place_id=${restaurant.id}`;
+    return encodeURI(`${url}${query}`);
+  }
 </script>
 
 {#if restaurants.length === 0}
