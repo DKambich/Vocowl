@@ -89,9 +89,9 @@
     formValues.city = address.city;
     updateField("city", address.city);
 
-    const test = states.find((state) => state.name === address.state);
-    formValues.state = test.value;
-    updateField("state", test.value);
+    const selectedState = states.find((state) => state.name === address.state);
+    formValues.state = selectedState?.value;
+    updateField("state", selectedState?.value);
 
     formValues.zipcode = address.zipcode;
     updateField("zipcode", address.zipcode);

@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as Leaflet from "leaflet";
+  import "leaflet-geosearch/dist/geosearch.css";
   import icon from "leaflet/dist/images/marker-icon.png";
   import iconShadow from "leaflet/dist/images/marker-shadow.png";
   import "leaflet/dist/leaflet.css";

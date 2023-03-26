@@ -1,9 +1,7 @@
 <script lang="ts">
   import { Button, Modal } from "flowbite-svelte";
   import * as Leaflet from "leaflet";
-  import { getContext } from "svelte";
-  import { GEOCODE_SERVICE } from "../../constants";
-  import type { IGeocodingService } from "../../services/IGeocodingService";
+  import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
   import type { Address, LatLng } from "../../types";
 
   export let initialLocation: LatLng;
@@ -16,23 +14,67 @@
     setDisplayedCoordinates: (coords: LatLng) => void;
   };
 
-  const geocodeService = getContext<IGeocodingService>(GEOCODE_SERVICE);
-
   let selectedLatLng: LatLng;
+  let selectedAddress: Address;
+
+  function parseAddressFromLabel(label: string) {
+    const addressComponents = label.split(",").map((str) => str.trim());
+    if (addressComponents.length < 6) {
+      return {
+        address1: "",
+        city: "",
+        state: "",
+        zipcode: "",
+      };
+    }
+
+    // Parse Assumed Address Format Backwards: [Name]? [Building #]? [Road] [City] [County] [State] [Zipcode] [Country]
+
+    // Remove the Country
+    addressComponents.pop();
+    const zipcode = addressComponents.pop();
+    const state = addressComponents.pop();
+    // Remove the County
+    addressComponents.pop();
+    const city = addressComponents.pop();
+
+    let address1 = addressComponents.pop();
+    if (addressComponents.length) {
+      let houseNumber = addressComponents.pop();
+      if (parseInt(houseNumber)) address1 = `${houseNumber} ${address1}`;
+    }
+
+    return {
+      address1,
+      city,
+      state,
+      zipcode,
+    };
+  }
 
   const PlaceInfoControl = Leaflet.Control.extend({
     onAdd: function () {
       const coordsDiv: HTMLDivElement = Leaflet.DomUtil.create("div");
-      coordsDiv.className = "text-black font-semibold bg-gray-100 p-1 rounded ";
+      coordsDiv.className = "text-black font-semibold bg-white p-1 rounded-sm";
+      coordsDiv.style.border = "2px solid rgba(0,0,0,0.2)";
 
       return coordsDiv;
     },
     setDisplayedCoordinates: function ({ lat, lng }: LatLng) {
       this.getContainer().innerHTML = `Latitude: ${lat.toFixed(
         4
-      )} Longitude: ${lng.toFixed(4)}`;
+      )}</br>Longitude: ${lng.toFixed(4)}`;
     },
   });
+
+  type SearchEvent = Leaflet.LeafletEvent & {
+    location: {
+      x: number;
+      y: number;
+      label: string;
+      bounds: number[][];
+    };
+  };
 
   function createMap(container) {
     selectedLatLng = initialLocation ?? {
@@ -67,12 +109,31 @@
       selectedLatLng = clickEvent.latlng;
       placeMarker.setLatLng(selectedLatLng);
       placeInfoControl.setDisplayedCoordinates(selectedLatLng);
+      selectedAddress = null;
     });
 
-    placeMarker.on("drag", function (dragEvent) {
+    placeMarker.on("drag", (dragEvent) => {
       selectedLatLng = (dragEvent as Leaflet.LeafletMouseEvent).latlng;
       placeInfoControl.setDisplayedCoordinates(selectedLatLng);
+      selectedAddress = null;
     });
+
+    const searchControl = GeoSearchControl({
+      provider: new OpenStreetMapProvider(),
+      style: "bar",
+      showMarker: false,
+    });
+    leafletMap.on("geosearch/showlocation", (searchEvent: SearchEvent) => {
+      console.log(searchEvent);
+      let location: LatLng = {
+        lat: searchEvent.location.y,
+        lng: searchEvent.location.x,
+      };
+      placeMarker.setLatLng(location);
+      selectedAddress = parseAddressFromLabel(searchEvent.location.label);
+    });
+
+    leafletMap.addControl(searchControl);
 
     return leafletMap;
   }
@@ -87,19 +148,35 @@
   }
 
   async function pickPlace() {
-    const [address, error] = await geocodeService.getAddressFromLocation(
-      selectedLatLng
-    );
-    if (error) {
-      // TODO: Handle error
-    } else {
-      onLocationSelected(address, selectedLatLng);
+    if (selectedAddress) {
+      console.log("Valid");
+      onLocationSelected(selectedAddress, selectedLatLng);
       open = false;
+    } else {
+      try {
+        console.log("Trying to Search");
+        const provider = new OpenStreetMapProvider();
+        const results = await provider.search({
+          query: `${selectedLatLng.lat},${selectedLatLng.lng}`,
+        });
+
+        if (results.length) {
+          selectedAddress = parseAddressFromLabel(results[0].label);
+          console.log("Worked");
+          onLocationSelected(selectedAddress, selectedLatLng);
+          open = false;
+        } else {
+          // TODO: Handle error
+        }
+      } catch {
+        // TODO: Handle error
+      }
     }
   }
 
   function reset() {
     selectedLatLng = null;
+    selectedAddress = null;
   }
 </script>
 
