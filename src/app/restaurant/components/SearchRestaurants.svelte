@@ -24,14 +24,7 @@
 
   // Search Related Variables
   const poiService = getContext<IPOIService>(POI_SERVICE);
-  let searchResults: Restaurant[] = [
-    {
-      id: "123",
-      name: "test",
-      address: { address1: "1", city: "23", zipcode: "2", state: "MN" },
-      source: "here",
-    },
-  ];
+  let searchResults: Restaurant[] = [];
   let isSearchLoading = false;
 
   // Form Variables
