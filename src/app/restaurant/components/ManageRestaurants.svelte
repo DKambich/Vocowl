@@ -3,7 +3,6 @@
   import {
     BuildingStorefront,
     GlobeAlt,
-    MapPin,
     Trash,
     UserCircle,
   } from "svelte-heros-v2";
@@ -11,21 +10,10 @@
     localStorage,
     removeRestaurant,
   } from "../../../stores/localStorageStore";
-  import type { Restaurant } from "../../../types";
+  import { getFormattedAddress, getGoogleMapsURL } from "../../../utilities";
   import { IconMessage } from "../../shared";
 
   $: restaurants = $localStorage.restaurants;
-
-  function generateGoogleMapsURL(restaurant: Restaurant) {
-    const url = "https://www.google.com/maps/search/?api=1";
-    let query = `&query=`;
-    query += `${restaurant.name}`;
-    if (restaurant.location) {
-      query += `+${restaurant.location.lat},${restaurant.location.lng}`;
-    }
-    query += `&query_place_id=${restaurant.id}`;
-    return encodeURI(`${url}${query}`);
-  }
 </script>
 
 {#if restaurants.length === 0}
@@ -37,39 +25,34 @@
     {#each restaurants as restaurant}
       <Card class="flex flex-col justify-around gap-3 " size="xl">
         <div
-          class="flex items-center gap-1 md:gap-2 font-bold text-lg tracking-tight"
+          class="flex items-center gap-1 md:gap-2 font-bold text-xl tracking-tight"
         >
-          <div>
-            {#if restaurant.source !== "custom"}
-              <GlobeAlt />
-            {:else}
-              <UserCircle />
-            {/if}
-          </div>
-          {restaurant.name}
-        </div>
-        <div>
-          <a href={generateGoogleMapsURL(restaurant)} target="_blank">
-            {restaurant.address}
-          </a>
-        </div>
-
-        <div class="flex gap-2">
+          {#if restaurant.source !== "custom"}
+            <GlobeAlt size="28" />
+          {:else}
+            <UserCircle size="28" />
+          {/if}
+          <span class="grow">{restaurant.name}</span>
           <Button
-            color="primary"
-            href={generateGoogleMapsURL(restaurant)}
-            target="_blank"
-          >
-            <MapPin size="20" />
-            <span class="ml-2 font-bold">Locate</span>
-          </Button>
-          <Button
-            color="alternative"
+            pill
+            outline
+            color="red"
+            class="!p-2"
             on:click={() => removeRestaurant(restaurant)}
           >
             <Trash size="20" />
-            <span class="ml-2 font-bold">Remove</span>
           </Button>
+        </div>
+        <div>
+          {#if restaurant.address}
+            <address>
+              <a href={getGoogleMapsURL(restaurant)} target="_blank">
+                {getFormattedAddress(restaurant.address)}
+              </a>
+            </address>
+          {:else}
+            <span>No Address Entered</span>
+          {/if}
         </div>
       </Card>
     {/each}

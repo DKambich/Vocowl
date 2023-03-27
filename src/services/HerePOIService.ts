@@ -59,7 +59,12 @@ export class HerePOIService implements IPOIService {
             name: title,
             source: "here",
             location: position,
-            address: `${houseNumber} ${street}, ${city}, ${stateCode} ${postalCode}`,
+            address: {
+              address1: `${houseNumber} ${street}`,
+              city,
+              state: stateCode,
+              zipcode: postalCode,
+            },
           };
         });
 
@@ -102,7 +107,12 @@ export class HerePOIService implements IPOIService {
             name: title,
             source: "here",
             location: position,
-            address: `${houseNumber} ${street}, ${city}, ${stateCode} ${postalCode}`,
+            address: {
+              address1: `${houseNumber} ${street}`,
+              city,
+              state: stateCode,
+              zipcode: postalCode,
+            },
           };
         });
 

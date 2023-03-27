@@ -35,7 +35,7 @@
   color={$localStorage.useDarkTheme ? "form" : "indigo"}
 >
   <!-- Vocowl Logo and Title -->
-  <NavBrand href="./" class="gap-3 text-indigo-600 dark:text-white">
+  <NavBrand href="#" class="gap-3 text-indigo-600 dark:text-white">
     <Vocowl size={28} />
     <span class="text-xl font-semibold">Vocowl</span>
   </NavBrand>

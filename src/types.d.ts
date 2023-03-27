@@ -6,7 +6,7 @@ export type LatLng = {
 export type Restaurant = {
   id: string;
   name: string;
-  address?: string;
+  address?: Address;
   location?: LatLng;
   source: "custom" | "google" | "here";
 };

@@ -7,10 +7,12 @@
     Label,
     Select,
   } from "flowbite-svelte";
+  import { getContext } from "svelte";
   import { createForm } from "svelte-forms-lib";
   import { MapPin } from "svelte-heros-v2";
   import { fade } from "svelte/transition";
-  import { US_STATES } from "../../../constants";
+  import { GEOCODE_SERVICE, US_STATES } from "../../../constants";
+  import type { IGeocodingService } from "../../../services/IGeocodingService";
   import { addRestaurant } from "../../../stores/localStorageStore";
   import { showToast } from "../../../stores/toastStore";
   import type {
@@ -27,6 +29,8 @@
     value: state.abbreviation,
     name: state.name,
   }));
+
+  const geocodeService = getContext<IGeocodingService>(GEOCODE_SERVICE);
 
   export let userLocation: LatLng;
 
@@ -97,7 +101,7 @@
     updateField("zipcode", address.zipcode);
   }
 
-  function submitForm({
+  async function submitForm({
     restaurant,
     address1,
     address2,
@@ -107,12 +111,23 @@
   }: ManualPlaceFormValues) {
     const customRestaurant: Restaurant = {
       name: restaurant,
-      address: `${address1}${
-        address2 ? " " + address2 : ""
-      }, ${city}, ${state} ${zipcode}`,
       id: GUID(),
       source: "custom",
     };
+
+    // Attempt to geocode and add the address if it was entered
+    if (useAddressInput) {
+      const address = { address1, address2, city, state, zipcode };
+
+      const [location, error] = await geocodeService.getLocationFromAddress(
+        address
+      );
+      if (error) {
+        // TODO: Handle error, not necessarily show to user
+      }
+      customRestaurant.address = address;
+      customRestaurant.location = location;
+    }
 
     formValues.restaurant = "";
     formValues.address1 = "";

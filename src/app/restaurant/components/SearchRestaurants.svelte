@@ -2,7 +2,7 @@
   import { Button, Card, Helper, Input, Spinner } from "flowbite-svelte";
   import { getContext } from "svelte";
   import { createForm } from "svelte-forms-lib";
-  import { MagnifyingGlass } from "svelte-heros-v2";
+  import { MagnifyingGlass, Minus, Plus } from "svelte-heros-v2";
   import { POI_SERVICE } from "../../../constants";
   import type { IPOIService } from "../../../services/IPOIService";
   import {
@@ -17,13 +17,21 @@
     PlacesSearchFormValues,
     Restaurant,
   } from "../../../types";
+  import { getFormattedAddress, getGoogleMapsURL } from "../../../utilities";
 
   // External Variables
   export let location: LatLng;
 
   // Search Related Variables
   const poiService = getContext<IPOIService>(POI_SERVICE);
-  let searchResults: Restaurant[] = [];
+  let searchResults: Restaurant[] = [
+    {
+      id: "123",
+      name: "test",
+      address: { address1: "1", city: "23", zipcode: "2", state: "MN" },
+      source: "here",
+    },
+  ];
   let isSearchLoading = false;
 
   // Form Variables
@@ -57,7 +65,6 @@
     isSearchLoading = false;
     if (error) {
       // TODO: Handle error better
-      console.error(error);
       showToast({
         message: "Something went wrong. Please try again.",
         type: "error",
@@ -92,8 +99,6 @@
       timeout: 2000,
     });
   }
-
-  let searchRadius = 5;
 </script>
 
 <form class="flex gap-2" on:submit={handleSubmit}>
@@ -124,40 +129,39 @@
 </Helper>
 
 <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-  {#each searchResults as result}
+  {#each searchResults as result (result.id)}
     <Card size="lg">
-      <div class="grow">
-        <h5
-          class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-        >
-          {result.name}
-        </h5>
-        <address
-          class="font-normal text-gray-700 dark:text-gray-400 leading-tight"
-        >
-          {result.address}
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center">
+          <div class="text-2xl font-bold tracking-tight grow">
+            {result.name}
+          </div>
+          {#if !savedRestaurants.find((restaurant) => restaurant.id === result.id)}
+            <Button
+              pill
+              color="primary"
+              class="!p-1"
+              on:click={() => addQueriedRestaurant(result)}
+            >
+              <Plus size="16" />
+            </Button>
+          {:else}
+            <Button
+              pill
+              color="red"
+              class="!p-1"
+              on:click={() => removeRestaurant(result)}
+            >
+              <Minus size="16" />
+            </Button>
+          {/if}
+        </div>
+        <address>
+          <a href={getGoogleMapsURL(result)} target="_blank">
+            {getFormattedAddress(result.address)}
+          </a>
         </address>
       </div>
-      {#if !savedRestaurants.find((restaurant) => restaurant.id === result.id)}
-        <Button
-          color="primary"
-          size="sm"
-          class="w-full mt-2"
-          on:click={() => addQueriedRestaurant(result)}
-          disabled={isSearchLoading}
-        >
-          Add Restaurant
-        </Button>{:else}
-        <Button
-          color="red"
-          size="sm"
-          class="w-full mt-2"
-          on:click={() => removeQueriedRestaurant(result)}
-          disabled={isSearchLoading}
-        >
-          Remove Restaurant
-        </Button>
-      {/if}
     </Card>
   {/each}
 </div>

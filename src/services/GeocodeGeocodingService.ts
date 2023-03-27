@@ -70,6 +70,39 @@ export class GeocodeGeocodingService implements IGeocodingService {
     }
   }
 
+  async getLocationFromAddress(
+    address: Address
+  ): Promise<ServiceResponse<LatLng>> {
+    const GEOCODE_URL = `${this.BASE_URL}/search`;
+
+    const { address1, address2, city, state, zipcode } = address;
+
+    const QUERY = new URLSearchParams({
+      q: `${address1},${address2},${city},${state} ${zipcode},US`,
+    }).toString();
+
+    try {
+      const response = await fetch(`${GEOCODE_URL}?${QUERY}`);
+      if (response.ok) {
+        const geocodes: GeocodeResult = await response.json();
+        if (geocodes.length === 0) {
+          return [null, "No results found"];
+        }
+
+        const latLng = {
+          lat: Number.parseFloat(geocodes[0].lat),
+          lng: Number.parseFloat(geocodes[0].lon),
+        };
+
+        return [latLng, null];
+      } else {
+        return [null, response.statusText];
+      }
+    } catch (error) {
+      return [null, error];
+    }
+  }
+
   async getZipcodeFromLocation(location: LatLng): Promise<string> {
     const REVERSE_GEOCODE_URL = `${this.BASE_URL}/reverse`;
     const QUERY = new URLSearchParams({
