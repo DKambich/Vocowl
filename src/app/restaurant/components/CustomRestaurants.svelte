@@ -258,13 +258,15 @@
           on:click={() => (showPlacePicker = true)}
         >
           <MapPin class="mr-1" />
-          Locate Address
+          <span class="font-bold">Locate Address</span>
         </Button>
       </div>
     </div>
   {/if}
 
-  <Button type="submit" color="primary" class="w-full md:w-auto">Submit</Button>
+  <Button type="submit" color="primary">
+    <span class="font-bold">Submit</span>
+  </Button>
 
   <PlacePickerModal
     initialLocation={userLocation}

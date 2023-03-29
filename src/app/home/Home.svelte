@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Button, ButtonGroup, Heading, P } from "flowbite-svelte";
+  import { MagnifyingGlass, Megaphone } from "svelte-heros-v2";
   import { DECIDE_ROUTE, RESTAURANT_ROUTE } from "../../constants";
   import { PageBaseline } from "../meta";
   import Vocowl from "../shared/Vocowl.svelte";
@@ -17,6 +18,17 @@
     >
       Time To Be Vocowl
     </Heading>
+    <ButtonGroup>
+      <Button href={`#${RESTAURANT_ROUTE}`} color="primary" size="lg">
+        <MagnifyingGlass size="18" class="mr-1" />
+        <span class="font-bold"> Start Searching </span>
+      </Button>
+      <Button href={`#${DECIDE_ROUTE}`} color="alternative" size="lg">
+        <Megaphone size="18" class="mr-1" />
+        <span class="font-bold"> Start Deciding </span>
+      </Button>
+    </ButtonGroup>
+
     <P class="text-lg lg:text-xl xl:px-48 dark:text-gray-400">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua. Suscipit adipiscing
@@ -39,13 +51,5 @@
       nam at lectus. Pellentesque eu tincidunt tortor aliquam nulla facilisi.
       Sed viverra tellus in hac habitasse platea dictumst vestibulum.
     </P>
-    <ButtonGroup>
-      <Button href={`#${RESTAURANT_ROUTE}`} color="primary">
-        Start Searching
-      </Button>
-      <Button href={`#${DECIDE_ROUTE}`} color="alternative"
-        >Start Deciding</Button
-      >
-    </ButtonGroup>
   </div></PageBaseline
 >

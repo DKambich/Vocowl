@@ -46,7 +46,7 @@
           size="xl"
           on:click={startReel}
         >
-          Decide!
+          <span class="font-bold">Decide!</span>
         </Button>
       {:else}
         <div class="flex-1 flex justify-center">

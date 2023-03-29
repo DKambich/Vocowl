@@ -180,15 +180,17 @@
   }
 </script>
 
-<Modal title="Place Picker" size="xl" bind:open on:hide={reset}>
+<Modal title="Choose Location" size="xl" bind:open on:hide={reset}>
   <div
     class="w-[80vw] md:w-[700px] lg:w-[900px] xl:w-[1200px] h-[50vh]"
     use:mapAction
   />
   <div slot="footer" class="font-bold">
-    <Button color="primary" on:click={pickPlace} disabled={!selectedLatLng}
-      >Set Location</Button
-    >
-    <Button color="alternative" on:click={() => (open = false)}>Close</Button>
+    <Button color="primary" on:click={pickPlace} disabled={!selectedLatLng}>
+      <span class="font-bold">Choose Location</span>
+    </Button>
+    <Button color="alternative" on:click={() => (open = false)}>
+      <span class="font-bold">Close</span>
+    </Button>
   </div>
 </Modal>

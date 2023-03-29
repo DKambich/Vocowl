@@ -234,7 +234,7 @@
       disabled={!nearbyLMap}
       on:click={loadNearbyRestaurants}
     >
-      Search
+      <span class="font-bold">Search</span>
     </Button>
   </div>
 </div>

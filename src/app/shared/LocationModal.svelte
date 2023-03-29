@@ -199,7 +199,7 @@
       {#if loadingZipcodeVerification}
         <Spinner color="gray" size="6" />
       {:else}
-        Set Location
+        <span class="font-bold">Set Location</span>
       {/if}
     </Button>
     <Button
@@ -207,7 +207,7 @@
       color="alternative"
       disabled={disableFields}
     >
-      Close
+      <span class="font-bold">Close</span>
     </Button>
   </svelte:fragment>
 </Modal>

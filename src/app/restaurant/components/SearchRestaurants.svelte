@@ -113,7 +113,7 @@
     {#if isSearchLoading}
       <Spinner color="white" size="5" />
     {:else}
-      Search
+      <span class="font-bold">Search</span>
     {/if}
   </Button>
 </form>
