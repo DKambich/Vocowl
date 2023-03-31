@@ -6,6 +6,7 @@
   import type { Restaurant } from "../../types";
   import { PageBaseline } from "../meta";
   import { IconMessage } from "../shared";
+  import PlaceInfoModal from "../shared/PlaceInfoModal.svelte";
   import { RestaurantSelector } from "./";
 
   let restaurants = $localStorage.restaurants;
@@ -26,6 +27,7 @@
 </script>
 
 <PageBaseline>
+  <PlaceInfoModal restaurant={restaurants[0]} open={true} />
   <div class="flex-1 grid grid-rows-2 grid-cols-1 lg:grid-cols-5 gap-4">
     <div
       class="col-span-1 row-span-2 min-h-[50vh] lg:col-span-3 lg:row-span-1 lg:min-h-0 flex flex-col gap-2"

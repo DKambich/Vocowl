@@ -185,7 +185,7 @@
     class="w-[80vw] md:w-[700px] lg:w-[900px] xl:w-[1200px] h-[50vh]"
     use:mapAction
   />
-  <div slot="footer" class="font-bold">
+  <div slot="footer" class="flex gap-2">
     <Button color="primary" on:click={pickPlace} disabled={!selectedLatLng}>
       <span class="font-bold">Choose Location</span>
     </Button>
