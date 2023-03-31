@@ -15,8 +15,9 @@
     selectedLatLng = restaurant.location;
 
     leafletMap = Leaflet.map(container, {
-      preferCanvas: true,
+      boxZoom: false,
       doubleClickZoom: false,
+      dragging: false,
       zoomControl: false,
     }).setView(selectedLatLng, 14);
 
@@ -37,6 +38,7 @@
       )
       .openPopup();
     leafletMap.dragging.disable();
+    leafletMap.boxZoom.disable();
     return leafletMap;
   }
 
