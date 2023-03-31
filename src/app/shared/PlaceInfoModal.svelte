@@ -16,6 +16,7 @@
 
     leafletMap = Leaflet.map(container, {
       boxZoom: false,
+      closePopupOnClick: false,
       doubleClickZoom: false,
       dragging: false,
       zoomControl: false,
@@ -44,16 +45,25 @@
 
   function mapAction(container) {
     leafletMap = createMap(container);
+
     return {
       destroy: () => {
-        leafletMap.remove();
+        leafletMap?.remove();
       },
     };
   }
 </script>
 
-<Modal title={restaurant.name} bind:open>
-  <div class="w-[80vw] md:w-[500px] h-[30vh] md:h-[500px]" use:mapAction />
+<Modal title={restaurant?.name} bind:open>
+  {#if restaurant.location}
+    <div class="w-[80vw] md:w-[500px] h-[30vh] md:h-[500px]" use:mapAction />
+  {:else if restaurant.address}
+    <div>{getFormattedAddress(restaurant.address)}</div>
+  {:else}
+    <div>
+      {restaurant.name} Won!
+    </div>
+  {/if}
   <div slot="footer" class="flex justify-center gap-2">
     <Button color="primary" on:click={() => (open = false)}>
       <MapPin size="18" class="mr-1" />

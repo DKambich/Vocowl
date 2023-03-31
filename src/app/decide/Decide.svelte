@@ -15,19 +15,25 @@
   // Variable Bindings
   let filteredRestaurants: Restaurant[] = [];
   let startReel;
+  let selectedRestaurant: Restaurant;
+  let openPlaceDetails = false;
 
   function onReelStart() {
     isSpinning = true;
   }
 
-  function onReelEnd(res: Restaurant) {
+  function onReelEnd(restaurant: Restaurant) {
     isSpinning = false;
-    alert(`${res.name} Won!!!`);
+    selectedRestaurant = restaurant;
+    openPlaceDetails = true;
   }
 </script>
 
 <PageBaseline>
-  <PlaceInfoModal restaurant={restaurants[0]} open={true} />
+  <PlaceInfoModal
+    restaurant={selectedRestaurant}
+    bind:open={openPlaceDetails}
+  />
   <div class="flex-1 grid grid-rows-2 grid-cols-1 lg:grid-cols-5 gap-4">
     <div
       class="col-span-1 row-span-2 min-h-[50vh] lg:col-span-3 lg:row-span-1 lg:min-h-0 flex flex-col gap-2"
