@@ -19,6 +19,7 @@
       closePopupOnClick: false,
       doubleClickZoom: false,
       dragging: false,
+      touchZoom: false,
       zoomControl: false,
     }).setView(selectedLatLng, 14);
 
@@ -38,8 +39,6 @@
         </div>`
       )
       .openPopup();
-    leafletMap.dragging.disable();
-    leafletMap.boxZoom.disable();
     return leafletMap;
   }
 
