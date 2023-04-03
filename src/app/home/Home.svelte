@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, ButtonGroup, Heading, P } from "flowbite-svelte";
+  import { Button, ButtonGroup, Heading, P, Span } from "flowbite-svelte";
   import { MagnifyingGlass, Megaphone } from "svelte-heros-v2";
   import { DECIDE_ROUTE, RESTAURANT_ROUTE } from "../../constants";
   import { PageBaseline } from "../meta";
@@ -28,28 +28,24 @@
         <span class="font-bold"> Start Deciding </span>
       </Button>
     </ButtonGroup>
-
-    <P class="text-lg lg:text-xl xl:px-48 dark:text-gray-400">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Suscipit adipiscing
-      bibendum est ultricies. Morbi enim nunc faucibus a pellentesque sit amet.
-      Auctor urna nunc id cursus metus aliquam eleifend mi in. Aliquet lectus
-      proin nibh nisl. Odio ut sem nulla pharetra diam sit. Gravida in fermentum
-      et sollicitudin ac orci phasellus egestas. In nibh mauris cursus mattis
-      molestie. Et tortor consequat id porta nibh. Dictum non consectetur a erat
-      nam at lectus. Pellentesque eu tincidunt tortor aliquam nulla facilisi.
-      Sed viverra tellus in hac habitasse platea dictumst vestibulum.
+    <Span italic>When in doubt, let Vocowl pick it out.</Span>
+    <P class="text-lg lg:text-xl xl:px-48 ">
+      Welcome to Vocowl, the perfect solution for those who struggle with making
+      food decisions. Do you find yourself constantly asking, "Where should I
+      eat?" or feeling overwhelmed by all the restaurant options around you? If
+      so, Vocowl is here to help.
     </P>
-    <P class="mb-6 text-lg lg:text-xl xl:px-48 dark:text-gray-400">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Suscipit adipiscing
-      bibendum est ultricies. Morbi enim nunc faucibus a pellentesque sit amet.
-      Auctor urna nunc id cursus metus aliquam eleifend mi in. Aliquet lectus
-      proin nibh nisl. Odio ut sem nulla pharetra diam sit. Gravida in fermentum
-      et sollicitudin ac orci phasellus egestas. In nibh mauris cursus mattis
-      molestie. Et tortor consequat id porta nibh. Dictum non consectetur a erat
-      nam at lectus. Pellentesque eu tincidunt tortor aliquam nulla facilisi.
-      Sed viverra tellus in hac habitasse platea dictumst vestibulum.
+    <P class="text-lg lg:text-xl xl:px-48">
+      The idea was born out of a simple question: "How do I pick where to eat?"
+      We understand that decision-making can be a challenge, especially when it
+      comes to food. That's why we built Vocowl; to help you easily select
+      nearby restaurants and even add your own favorites.
+    </P>
+    <P class="text-lg lg:text-xl xl:px-48">
+      As our name suggests, we pay homage to the wisdom of owls. Just as these
+      wise creatures have a reputation for making sound decisions, we believe
+      that Vocowl can help you do the same when it comes to food. So sit back,
+      relax, and let Vocowl choose your next dining destination.
     </P>
   </div>
 </PageBaseline>
