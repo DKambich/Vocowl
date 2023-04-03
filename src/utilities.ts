@@ -15,7 +15,7 @@ export function getFormattedAddress(address: Address): string {
   return `${address1}${address2}, ${city}, ${state} ${zipcode}`;
 }
 
-export function getGoogleMapsURL(restaurant: Restaurant) {
+export function getGoogleMapsSearchURL(restaurant: Restaurant) {
   const url = "https://www.google.com/maps/search/?api=1";
   const { name, address } = restaurant;
   const urlParams = new URLSearchParams();
@@ -27,6 +27,23 @@ export function getGoogleMapsURL(restaurant: Restaurant) {
     );
   } else {
     urlParams.append("query", `${name}`);
+  }
+
+  return `${url}&${urlParams.toString()}`;
+}
+
+export function getGoogleMapsDirectionsURL(restaurant: Restaurant) {
+  const url = "https://www.google.com/maps/dir/?api=1";
+  const { name, address } = restaurant;
+  const urlParams = new URLSearchParams();
+
+  if (address) {
+    urlParams.append(
+      "destination",
+      `${getFormattedAddress(address).replaceAll(",", "")}`
+    );
+  } else {
+    urlParams.append("destination", `${name}`);
   }
 
   return `${url}&${urlParams.toString()}`;

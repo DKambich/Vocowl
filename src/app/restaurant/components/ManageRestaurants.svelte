@@ -10,7 +10,10 @@
     localStorage,
     removeRestaurant,
   } from "../../../stores/localStorageStore";
-  import { getFormattedAddress, getGoogleMapsURL } from "../../../utilities";
+  import {
+    getFormattedAddress,
+    getGoogleMapsSearchURL,
+  } from "../../../utilities";
   import { IconMessage } from "../../shared";
 
   $: restaurants = $localStorage.restaurants;
@@ -46,7 +49,7 @@
         <div>
           {#if restaurant.address}
             <address>
-              <a href={getGoogleMapsURL(restaurant)} target="_blank">
+              <a href={getGoogleMapsSearchURL(restaurant)} target="_blank">
                 {getFormattedAddress(restaurant.address)}
               </a>
             </address>

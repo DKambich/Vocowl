@@ -3,7 +3,10 @@
   import * as Leaflet from "leaflet";
   import { MapPin } from "svelte-heros-v2";
   import type { LatLng, Restaurant } from "../../types";
-  import { getFormattedAddress } from "../../utilities";
+  import {
+    getFormattedAddress,
+    getGoogleMapsDirectionsURL,
+  } from "../../utilities";
 
   export let restaurant: Restaurant;
   export let open = false;
@@ -51,23 +54,31 @@
       },
     };
   }
+
+  function openDirections(restaurant: Restaurant) {
+    const directionsURL = getGoogleMapsDirectionsURL(restaurant);
+    window.open(directionsURL, "_blank");
+  }
 </script>
 
 <Modal title={restaurant?.name} bind:open>
-  {#if restaurant.location}
-    <div class="w-[80vw] md:w-[500px] h-[30vh] md:h-[500px]" use:mapAction />
-  {:else if restaurant.address}
-    <div>{getFormattedAddress(restaurant.address)}</div>
-  {:else}
-    <div>
-      {restaurant.name} Won!
-    </div>
-  {/if}
+  <div class="flex flex-col items-center">
+    <span class="text-lg font-semibold mb-2">
+      {restaurant.name} was selected!
+    </span>
+    {#if restaurant.location}
+      <div class="w-[80vw] md:w-[500px] h-[30vh] md:h-[500px]" use:mapAction />
+    {:else if restaurant.address}
+      <address>{getFormattedAddress(restaurant.address)}</address>
+    {/if}
+  </div>
   <div slot="footer" class="flex justify-center gap-2">
-    <Button color="primary" on:click={() => (open = false)}>
-      <MapPin size="18" class="mr-1" />
-      <span class="font-bold">Get Directions</span>
-    </Button>
+    {#if restaurant.address || restaurant.location}
+      <Button color="primary" on:click={() => openDirections(restaurant)}>
+        <MapPin size="18" class="mr-1" />
+        <span class="font-bold">Get Directions</span>
+      </Button>
+    {/if}
     <Button color="alternative" on:click={() => (open = false)}>
       <span class="font-bold">Close</span>
     </Button>

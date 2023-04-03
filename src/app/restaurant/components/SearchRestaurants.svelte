@@ -17,7 +17,10 @@
     PlacesSearchFormValues,
     Restaurant,
   } from "../../../types";
-  import { getFormattedAddress, getGoogleMapsURL } from "../../../utilities";
+  import {
+    getFormattedAddress,
+    getGoogleMapsSearchURL,
+  } from "../../../utilities";
 
   // External Variables
   export let location: LatLng;
@@ -150,7 +153,7 @@
           {/if}
         </div>
         <address>
-          <a href={getGoogleMapsURL(result)} target="_blank">
+          <a href={getGoogleMapsSearchURL(result)} target="_blank">
             {getFormattedAddress(result.address)}
           </a>
         </address>
