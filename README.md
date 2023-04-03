@@ -2,11 +2,11 @@
 
 ![Vocowl](./docs/Vocowl%20Header.png "Vocowl")
 
-The idea of Vocowl came about from a simple question, "How do I pick where to eat?" Built using Svelte and utilizing the Google Maps API, Vocowl let's you select nearby restaurants and enter your own favorites then picks one at random. By settling this question, Vocowl is perfect for people who are not vocal or indecisive about their food opinions and pays homage to the wisdom of owls.
+The idea of Vocowl came about from a simple question, "How do I pick where to eat?" Built using Svelte and utilizing the Leaflet and the HERE API, Vocowl let's you select nearby restaurants and enter your own favorites, then picks one at random. By settling this question, Vocowl is perfect for people who are not vocal and indecisive about their food opinions and pays homage to the wisdom of owls.
 
 ## Instructions
 
-Vocowl is hosted right here on GitHub. Visit https://dkambich.github.io/Vocowl/ to get started.
+Vocowl is hosted right here on GitHub. Visit https://dkambich.github.io/Vocowl/ to get searching.
 
 ## Building the Project Locally
 
@@ -17,7 +17,7 @@ git clone https://github.com/DKambich/Vocowl.git
 npm install
 ```
 
-**NOTE: Before running the project locally, you will need to replace the Google Maps API key stored in `credentials.ts`. The API key must be configured for both the base [Google Maps API](https://developers.google.com/maps/documentation/javascript/overview) and the [Google Places API](https://developers.google.com/maps/documentation/javascript/places). Google Maps and Google Place Search related functionality will not work if this is not done. Specifically, you will need to enable the Geocoding API, Maps Javascript API, and Place API**
+**NOTE: Before running the project locally, you will need create and replace the [HERE API](https://developer.here.com/) key stored in `credentials.ts`. Restaurant search functionality will not work if this is not done.**
 
 ### Running:
 
