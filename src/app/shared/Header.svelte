@@ -27,6 +27,11 @@
   import { Vocowl } from "../shared";
 
   let currentPage = $location;
+
+  function playOwlHoot() {
+    const audio = document.getElementById("vocowlAudio") as HTMLAudioElement;
+    audio.play();
+  }
 </script>
 
 <Navbar
@@ -36,7 +41,10 @@
 >
   <!-- Vocowl Logo and Title -->
   <NavBrand href="#/" class="gap-3 text-indigo-600 dark:text-white">
-    <Vocowl size={28} />
+    <audio id="vocowlAudio">
+      <source src="owl-hoot.mp3" type="audio/mpeg" />
+    </audio>
+    <Vocowl size={28} on:click={playOwlHoot} />
     <span class="text-xl font-semibold">Vocowl</span>
   </NavBrand>
   <!-- Hamburger Menu Icon displayed on small screens -->

@@ -3,7 +3,6 @@
     Accordion,
     AccordionItem,
     Button,
-    Checkbox,
     Label,
     Listgroup,
     ListgroupItem,
@@ -203,7 +202,7 @@
       {/if}
     </Listgroup>
     <Accordion flush>
-      <AccordionItem>
+      <AccordionItem open>
         <span slot="header">Search Options</span>
         <div class="flex flex-col gap-4 items-stretch">
           <div>
@@ -214,17 +213,6 @@
               bind:value={searchRadius}
               disabled={!nearbyLMap}
             />
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <Checkbox checked={openNow} on:click={() => (openNow = !openNow)}>
-              Fast Food
-            </Checkbox>
-            <Checkbox checked={openNow} on:click={() => (openNow = !openNow)}>
-              Casual Dining
-            </Checkbox>
-            <Checkbox checked={openNow} on:click={() => (openNow = !openNow)}>
-              Fine Dining
-            </Checkbox>
           </div>
         </div>
       </AccordionItem>
