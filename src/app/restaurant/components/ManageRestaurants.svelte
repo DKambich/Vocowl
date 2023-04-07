@@ -16,6 +16,7 @@
   } from "../../../utilities";
   import { IconMessage } from "../../shared";
 
+  // State Subscription
   $: restaurants = $localStorage.restaurants;
 </script>
 
@@ -37,10 +38,10 @@
           {/if}
           <span class="grow">{restaurant.name}</span>
           <Button
-            pill
-            outline
-            color="red"
             class="!p-2"
+            color="red"
+            outline
+            pill
             on:click={() => removeRestaurant(restaurant)}
           >
             <Trash size="20" />

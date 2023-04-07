@@ -16,9 +16,12 @@
   import { PageBaseline } from "../meta";
   import { LocationModal } from "../shared";
 
+  // Component Variables
+  let isLocationModalOpen = false;
+
+  // State Subscription
   $: userLocation = $localStorage.location.latlng;
   $: userZipcode = $localStorage.location.zipcode;
-  let isLocationModalOpen = false;
 </script>
 
 <PageBaseline>
@@ -33,14 +36,13 @@
       {/if}
     </div>
     <a
-      href="/"
       class="font-semibold underline underline-offset-2 cursor-pointer"
+      href="/#"
       on:click|preventDefault={() => (isLocationModalOpen = true)}
     >
       Update Your Location
     </a>
   </div>
-  <div />
   <LocationModal bind:open={isLocationModalOpen} />
   <Tabs
     style="full"

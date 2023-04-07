@@ -26,24 +26,22 @@
   // External Variables
   export let location: LatLng;
 
-  // Search Related Variables
+  // Component Variables
   const poiService = getContext<IPOIService>(POI_SERVICE);
   let searchResults: Restaurant[] = [];
   let hasSearched = false;
   let isSearchLoading = false;
 
-  // Form Variables
   const formValues: PlacesSearchFormValues = {
     search: "",
   };
-
   const { errors, handleChange, handleSubmit } = createForm({
     initialValues: formValues,
     onSubmit: submitForm,
     validate: validateForm,
   });
 
-  // Reactive Variables
+  // State Subscription
   $: locationEmpty = !location;
   $: savedRestaurants = $localStorage.restaurants;
 
@@ -54,14 +52,27 @@
     $errors.search = "";
   }
 
+  // Component Functions
+  function validateForm(values: PlacesSearchFormValues) {
+    let errors: PlacesSearchFormErrors = {};
+    if (values.search.trim() === "") {
+      errors.search = "Search cannot be empty";
+    }
+    return errors;
+  }
+
   async function submitForm({ search }: PlacesSearchFormValues) {
     isSearchLoading = true;
+
+    // Search for queried restaurants
     const [restaurants, error] = await poiService.getQueriedRestaurants(
       search,
       location
     );
+
     hasSearched = true;
     isSearchLoading = false;
+
     if (error) {
       showToast({
         message: "Something went wrong. Please try again.",
@@ -70,14 +81,6 @@
     } else {
       searchResults = restaurants;
     }
-  }
-
-  function validateForm(values: PlacesSearchFormValues) {
-    let errors: PlacesSearchFormErrors = {};
-    if (values.search.trim() === "") {
-      errors.search = "Search cannot be empty";
-    }
-    return errors;
   }
 
   function addQueriedRestaurant(restaurant: Restaurant) {
@@ -101,19 +104,19 @@
 
 <form class="flex gap-2" on:submit={handleSubmit}>
   <Input
+    disabled={locationEmpty}
     name="search"
     placeholder="Search"
     size="md"
-    on:change={handleChange}
-    disabled={locationEmpty}
     bind:value={formValues.search}
+    on:change={handleChange}
   >
     <MagnifyingGlass slot="left" size="20" />
   </Input>
   <Button
+    disabled={locationEmpty || isSearchLoading}
     color="primary"
     type="submit"
-    disabled={locationEmpty || isSearchLoading}
   >
     {#if isSearchLoading}
       <Spinner color="white" size="5" />
@@ -122,6 +125,7 @@
     {/if}
   </Button>
 </form>
+
 <Helper class="mt-2 mb-4" color="red">
   {$errors.search}
 </Helper>

@@ -25,17 +25,18 @@
   import { GUID } from "../../../utilities";
   import { PlacePickerModal } from "../../shared";
 
+  // Type Definitions
+  // External Variables
+  export let userLocation: LatLng;
+
+  // Component Variables
+  const geocodeService = getContext<IGeocodingService>(GEOCODE_SERVICE);
   const states = US_STATES.map((state) => ({
     value: state.abbreviation,
     name: state.name,
   }));
 
-  const geocodeService = getContext<IGeocodingService>(GEOCODE_SERVICE);
-
-  export let userLocation: LatLng;
-
   let showPlacePicker = false;
-
   let useAddressInput = false;
   const formValues: ManualPlaceFormValues = {
     restaurant: "",
@@ -45,13 +46,20 @@
     state: "",
     zipcode: "",
   };
+  const { errors, handleChange, handleSubmit, updateField } = createForm({
+    initialValues: formValues,
+    validate: validateForm,
+    onSubmit: submitForm,
+  });
 
-  const { errors, handleReset, handleChange, handleSubmit, updateField } =
-    createForm({
-      initialValues: formValues,
-      validate: validateForm,
-      onSubmit: submitForm,
-    });
+  // Component Functions
+  function toggleAddressInput() {
+    useAddressInput = !useAddressInput;
+    $errors.address1 = "";
+    $errors.city = "";
+    $errors.state = "";
+    $errors.zipcode = "";
+  }
 
   function validateForm(values: ManualPlaceFormValues) {
     let errors: ManualPlaceFormErrors = {};
@@ -75,32 +83,6 @@
     return errors;
   }
 
-  function toggleAddressInput() {
-    useAddressInput = !useAddressInput;
-    $errors.address1 = "";
-    $errors.city = "";
-    $errors.state = "";
-    $errors.zipcode = "";
-  }
-
-  function handleLocatedAddress(address: Address, location: LatLng) {
-    formValues.address1 = address.address1;
-    updateField("address1", address.address1);
-
-    formValues.address2 = address.address2;
-    updateField("address2", address.address2);
-
-    formValues.city = address.city;
-    updateField("city", address.city);
-
-    const selectedState = states.find((state) => state.name === address.state);
-    formValues.state = selectedState?.value;
-    updateField("state", selectedState?.value);
-
-    formValues.zipcode = address.zipcode;
-    updateField("zipcode", address.zipcode);
-  }
-
   async function submitForm({
     restaurant,
     address1,
@@ -115,18 +97,17 @@
       source: "custom",
     };
 
-    // Attempt to geocode and add the address if it was entered
+    // Geocode the address if entered
     if (useAddressInput) {
       const address = { address1, address2, city, state, zipcode };
+      customRestaurant.address = address;
 
       const [location, error] = await geocodeService.getLocationFromAddress(
         address
       );
-      if (error) {
-        // TODO: Handle error, not necessarily show to user
+      if (!error) {
+        customRestaurant.location = location;
       }
-      customRestaurant.address = address;
-      customRestaurant.location = location;
     }
 
     formValues.restaurant = "";
@@ -143,6 +124,24 @@
       timeout: 2000,
     });
   }
+
+  function handleLocatedAddress(address: Address, _: LatLng) {
+    formValues.address1 = address.address1;
+    updateField("address1", address.address1);
+
+    formValues.address2 = address.address2;
+    updateField("address2", address.address2);
+
+    formValues.city = address.city;
+    updateField("city", address.city);
+
+    const selectedState = states.find((state) => state.name === address.state);
+    formValues.state = selectedState?.value;
+    updateField("state", selectedState?.value);
+
+    formValues.zipcode = address.zipcode;
+    updateField("zipcode", address.zipcode);
+  }
 </script>
 
 <form on:submit|preventDefault={handleSubmit} class="flex flex-col">
@@ -151,10 +150,10 @@
       Restaurant <span class="text-red-600 font-bold">*</span>
     </Label>
     <Input
-      type="text"
-      name="restaurant"
       id="restaurant"
+      name="restaurant"
       placeholder=""
+      type="text"
       bind:value={formValues.restaurant}
       on:change={handleChange}
     />
@@ -176,9 +175,9 @@
           Address Line 1 <span class="text-red-600 font-bold">*</span>
         </Label>
         <Input
-          type="text"
-          name="address1"
           id="address1"
+          name="address1"
+          type="text"
           bind:value={formValues.address1}
           on:change={handleChange}
         />
@@ -191,9 +190,9 @@
       <div>
         <Label for="address2" class="mb-2">Address Line 2</Label>
         <Input
-          type="text"
-          name="address2"
           id="address2"
+          name="address2"
+          type="text"
           bind:value={formValues.address2}
           on:change={handleChange}
         />
@@ -203,9 +202,9 @@
           City <span class="text-red-600 font-bold">*</span>
         </Label>
         <Input
-          type="text"
-          name="city"
           id="city"
+          name="city"
+          type="text"
           bind:value={formValues.city}
           on:change={handleChange}
         />
@@ -220,8 +219,8 @@
           State <span class="text-red-600 font-bold">*</span>
         </Label>
         <Select
-          name="state"
           id="state"
+          name="state"
           placeholder="Choose a State..."
           items={states}
           bind:value={formValues.state}
@@ -238,9 +237,9 @@
           Zipcode <span class="text-red-600 font-bold">*</span>
         </Label>
         <Input
-          type="text"
-          name="zipcode"
           id="zipcode"
+          name="zipcode"
+          type="text"
           bind:value={formValues.zipcode}
           on:change={handleChange}
         />
@@ -264,7 +263,7 @@
     </div>
   {/if}
 
-  <Button type="submit" color="primary">
+  <Button color="primary" type="submit">
     <span class="font-bold">Submit</span>
   </Button>
 

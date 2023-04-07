@@ -28,39 +28,57 @@
   import type { LatLng, Restaurant } from "../../../types";
   import { IconMessage } from "../../shared";
 
-  // User Location Variables
+  // Type Definitions
+  // External Variables
   export let userLocation: LatLng;
+
+  // Component Variables
+  const poiService = getContext<IPOIService>(POI_SERVICE);
+
   let cachedLocation = userLocation;
 
-  // Map state Variables
-  let nearbyLMap: Leaflet.Map;
+  let nearbyMap: Leaflet.Map;
   let searchCircle: Leaflet.Circle;
-  let mapLayer: Leaflet.TileLayer = Leaflet.tileLayer(
-    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-      minZoom: 6,
-      maxZoom: 16,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }
-  );
 
   let nearbyRestaurants: Restaurant[] = [];
   let nearbyMarkers: Leaflet.Marker[] = [];
-
-  // Internal Search Options state variables
   let searchRadius = 5;
   let hasSearched = false;
-  $: savedRestaurants = $localStorage.restaurants;
 
-  const poiService = getContext<IPOIService>(POI_SERVICE);
+  // Component Setup
+  afterUpdate(() => {
+    if (userLocation && !nearbyMap) {
+      nearbyMap = Leaflet.map("nearbyMap")
+        .setView(userLocation, 12)
+        .addLayer(
+          Leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            minZoom: 6,
+            maxZoom: 16,
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          })
+        );
+
+      searchCircle = Leaflet.circle(userLocation, {
+        color: "#5850EC",
+        fillOpacity: 0.35,
+        radius: searchRadius * MILES_TO_METERS,
+      }).addTo(nearbyMap);
+    }
+  });
+
+  onDestroy(() => {
+    nearbyMap.remove();
+  });
+
+  // State Subscription
+  $: savedRestaurants = $localStorage.restaurants;
 
   // Update map center and search radius center when location changes
   $: if (userLocation != cachedLocation) {
-    nearbyLMap?.setView(userLocation);
-    nearbyLMap?.setZoom(12);
+    nearbyMap?.setView(userLocation);
+    nearbyMap?.setZoom(12);
     searchCircle?.setLatLng(userLocation);
-    if (userLocation && nearbyLMap) loadNearbyRestaurants();
     cachedLocation = userLocation;
   }
 
@@ -69,38 +87,16 @@
     searchCircle?.setRadius(searchRadius * MILES_TO_METERS);
   }
 
-  // Map Style Toggle on App Theme
-  $: darkMode = $localStorage.useDarkTheme;
-  $: {
-    nearbyLMap?.removeLayer(mapLayer);
-    if (darkMode) {
-      mapLayer.setUrl("https://tile.openstreetmap.org/{z}/{x}/{y}.png");
-    } else {
-      mapLayer.setUrl("https://tile.openstreetmap.org/{z}/{x}/{y}.png");
-    }
-    nearbyLMap?.addLayer(mapLayer);
+  // Component Functions
+  function centerMapOnRestaurant(restaurant: Restaurant) {
+    nearbyMap.flyTo(restaurant.location, 16);
   }
 
-  // After DOM has loaded, load in the the nearby search map and search radius
-  afterUpdate(() => {
-    if (userLocation && !nearbyLMap) {
-      nearbyLMap = Leaflet.map("nearbyMap").setView(userLocation, 12);
-      searchCircle = Leaflet.circle(userLocation, {
-        color: "#5850EC",
-        fillOpacity: 0.35,
-        radius: searchRadius * MILES_TO_METERS,
-      }).addTo(nearbyLMap);
-      // loadNearbyRestaurants();
-    }
-  });
-
   async function loadNearbyRestaurants() {
-    // Clear nearby restaurants
     nearbyRestaurants = [];
-    // Remove existing markers from map and clear markers
     nearbyMarkers.forEach((marker) => marker.remove());
 
-    // Fetch the nearby restaurants based on current options
+    // Get nearby restaurants
     const [restaurants, error] = await poiService.getNearbyRestaurants(
       userLocation,
       { radius: searchRadius * MILES_TO_METERS }
@@ -117,19 +113,10 @@
       nearbyRestaurants = restaurants;
       nearbyMarkers = [
         ...restaurants.map(({ location }) =>
-          Leaflet.marker(location).addTo(nearbyLMap)
+          Leaflet.marker(location).addTo(nearbyMap)
         ),
       ];
     }
-  }
-
-  onDestroy(() => {
-    nearbyLMap.remove();
-  });
-
-  function centerMapOnRestaurant(restaurant: Restaurant) {
-    // Move the map and increase zoom level to center on the restaurant location
-    nearbyLMap?.flyTo(restaurant.location, 16);
   }
 
   function addMapRestaurant(restaurant: Restaurant) {
@@ -154,7 +141,7 @@
     id="nearbyMap"
     class="col-span-1 lg:col-span-2 rounded-lg flex justify-center h-[50vh] z-0"
   >
-    {#if !nearbyLMap}
+    {#if !nearbyMap}
       <IconMessage icon={MapPin} size="xl">
         Update your location to load map
       </IconMessage>
@@ -211,10 +198,10 @@
           <div>
             <Label>Search Radius ({searchRadius} miles)</Label>
             <Range
+              disabled={!nearbyMap}
               min="1"
               max="10"
               bind:value={searchRadius}
-              disabled={!nearbyLMap}
             />
           </div>
         </div>
@@ -222,7 +209,7 @@
     </Accordion>
     <Button
       color="primary"
-      disabled={!nearbyLMap}
+      disabled={!nearbyMap}
       on:click={loadNearbyRestaurants}
     >
       <span class="font-bold">Search</span>
