@@ -14,9 +14,15 @@
   import { GEOCODE_SERVICE } from "../../constants";
   import type { IGeocodingService } from "../../services/IGeocodingService";
   import { cacheLocation, localStorage } from "../../stores/localStorageStore";
-  // External LatLng of the user's location
-  let userLocation = $localStorage.location.latlng;
+
+  // Type Definitions
+  // External Variables
   export let open = false;
+
+  // Component Variables
+  const geocodingService = getContext<IGeocodingService>(GEOCODE_SERVICE);
+  let userLocation = $localStorage.location.latlng;
+  let verifiedZipcode = $localStorage.location.zipcode;
 
   // Dictionary of geolocation error messages
   const zipcodeErrors = {
@@ -36,48 +42,46 @@
     NONE: "",
   };
 
-  // Internal state variables
-  const geocodingService = getContext<IGeocodingService>(GEOCODE_SERVICE);
-  let verifiedZipcode = $localStorage.location.zipcode;
-  $: userEnteredZipcode = verifiedZipcode;
   let zipcodeError = zipcodeErrors.NONE;
   let loadingGeolocation = false;
   let loadingZipcodeVerification = false;
 
+  // State Subscription
+  $: userEnteredZipcode = verifiedZipcode;
   $: disableFields = loadingGeolocation || loadingZipcodeVerification;
 
-  // Function to geolocate the user's location and zipcode
+  // Component Functions
   function geolocateZipcode() {
-    // Check if the device has geolocation available
+    // Check if geolocation is available
     if (navigator.geolocation) {
-      // Get the user's location
       loadingGeolocation = true;
       navigator.geolocation.getCurrentPosition(
         async (location) => {
-          // Geocode the user's zipcode from their location
           userLocation = {
             lat: location.coords.latitude,
             lng: location.coords.longitude,
           };
+
+          // Geocode the user's zipcode from their location
           const [zipcode, error] =
             await geocodingService.getZipcodeFromLocation(userLocation);
 
-          // If there is a zipcode
-          if (zipcode) {
-            // Update the modal
-            verifiedZipcode = zipcode;
-
-            // Cache the user's location
-            cacheLocation(userLocation, zipcode);
-
-            // Clear zipcode errors
-            zipcodeError = zipcodeErrors.NONE;
-            loadingGeolocation = false;
-            open = false;
-          } else if (error) {
+          if (error) {
             zipcodeError = zipcodeErrors.ERROR;
           } else {
-            zipcodeError = zipcodeErrors.UNKNOWN;
+            if (zipcode) {
+              verifiedZipcode = zipcode;
+
+              // Cache the user's location
+              cacheLocation(userLocation, zipcode);
+
+              // Clear zipcode errors
+              zipcodeError = zipcodeErrors.NONE;
+              loadingGeolocation = false;
+              open = false;
+            } else {
+              zipcodeError = zipcodeErrors.UNKNOWN;
+            }
           }
         },
         (error) => {
@@ -101,9 +105,8 @@
     }
   }
 
-  // Function to verify the manually entered zipcode and set the location
   async function verifyandSetManualZipcode() {
-    // Show an error if nothing is entered
+    // Show an error if no query is entered
     if (userEnteredZipcode.length === 0) {
       zipcodeError = zipcodeError = zipcodeErrors.INVALID;
       return;
@@ -121,7 +124,6 @@
     } else {
       verifiedZipcode = userEnteredZipcode;
 
-      // Store the user's location
       userLocation = {
         lat: location.lat,
         lng: location.lng,
@@ -138,22 +140,22 @@
   }
 </script>
 
-<Modal title="Update Location" bind:open autoclose={false}>
-  <div class="w-80">
+<Modal title="Update Location" autoclose={false} bind:open>
+  <div class="w-[80vw] md:w-80">
     <Label for="input-zipcode">Zipcode</Label>
     <ButtonGroup class="w-full mt-1">
       <Input
-        type="text"
-        placeholder="Enter Zipcode..."
-        bind:value={userEnteredZipcode}
+        id="input-zipcode"
         color={zipcodeError === zipcodeErrors.NONE ? "base" : "red"}
         disabled={disableFields}
-        id="input-zipcode"
+        placeholder="Enter Zipcode..."
+        type="text"
+        bind:value={userEnteredZipcode}
       />
       <Button
-        on:click={geolocateZipcode}
         color="primary"
         disabled={disableFields}
+        on:click={geolocateZipcode}
       >
         {#if loadingGeolocation}
           <Spinner color="gray" size="6" />
@@ -163,7 +165,6 @@
       </Button>
       <Tooltip placement="bottom">Use My Location</Tooltip>
     </ButtonGroup>
-    <!-- Error or Helper Text -->
     <Helper
       class="mt-2"
       color={zipcodeError === zipcodeErrors.NONE ? "gray" : "red"}
@@ -175,7 +176,6 @@
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${verifiedZipcode}`}
             target="_blank"
-            rel="noreferrer"
             class="underline"
           >
             Currently using {verifiedZipcode}
@@ -186,12 +186,11 @@
       </span>
     </Helper>
   </div>
-
   <svelte:fragment slot="footer">
     <Button
-      on:click={verifyandSetManualZipcode}
       color="primary"
       disabled={disableFields}
+      on:click={verifyandSetManualZipcode}
     >
       {#if loadingZipcodeVerification}
         <Spinner color="gray" size="6" />
@@ -200,9 +199,9 @@
       {/if}
     </Button>
     <Button
-      on:click={() => (open = false)}
       color="alternative"
       disabled={disableFields}
+      on:click={() => (open = false)}
     >
       <span class="font-bold">Close</span>
     </Button>

@@ -9,6 +9,7 @@
   import { fade } from "svelte/transition";
   import { toasts } from "../../stores/toastStore";
 
+  // Component Functions
   function getIcon(type: string) {
     if (type === "success") return CheckCircle;
     if (type === "warning") return ExclamationTriangle;
@@ -25,7 +26,7 @@
 </script>
 
 <div
-  class="fixed bottom-0 right-0 flex flex-col-reverse items-end gap-y-2 pb-2 pr-2 lg:pb-8 lg:pr-8 w-screen"
+  class="w-screen fixed right-0 bottom-0 flex flex-col-reverse items-end gap-y-2 pb-2 pr-2 lg:pb-8 lg:pr-8"
   style="z-index: 60"
 >
   {#each $toasts as toast (toast.id)}

@@ -84,10 +84,7 @@
   // After DOM has loaded, load in the the nearby search map and search radius
   afterUpdate(() => {
     if (userLocation && !nearbyLMap) {
-      nearbyLMap = Leaflet.map("nearbyMap", { preferCanvas: true }).setView(
-        userLocation,
-        12
-      );
+      nearbyLMap = Leaflet.map("nearbyMap").setView(userLocation, 12);
       searchCircle = Leaflet.circle(userLocation, {
         color: "#5850EC",
         fillOpacity: 0.35,
@@ -152,7 +149,7 @@
   }
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
   <div
     id="nearbyMap"
     class="col-span-1 lg:col-span-2 rounded-lg flex justify-center h-[50vh] z-0"

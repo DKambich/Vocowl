@@ -1,5 +1,4 @@
 <script lang="ts">
-  // Module Imports
   import {
     Navbar,
     NavBrand,
@@ -22,24 +21,24 @@
     NAVLI_INACTIVE_CLASS,
     RESTAURANT_ROUTE,
   } from "../../constants";
-  // Local Imports
   import { localStorage, toggleTheme } from "../../stores/localStorageStore";
   import { Vocowl } from "../shared";
 
+  // Component Variables
   let currentPage = $location;
 
+  // Component Functions
   function playOwlHoot() {
     const audio = document.getElementById("vocowlAudio") as HTMLAudioElement;
-    audio.play();
+    audio?.play();
   }
 </script>
 
 <Navbar
+  color={$localStorage.useDarkTheme ? "form" : "indigo"}
   let:hidden
   let:toggle
-  color={$localStorage.useDarkTheme ? "form" : "indigo"}
 >
-  <!-- Vocowl Logo and Title -->
   <NavBrand href="#/" class="gap-3 text-indigo-600 dark:text-white">
     <audio id="vocowlAudio">
       <source src="owl-hoot.mp3" type="audio/mpeg" />
@@ -47,9 +46,7 @@
     <Vocowl size={28} on:click={playOwlHoot} />
     <span class="text-xl font-semibold">Vocowl</span>
   </NavBrand>
-  <!-- Hamburger Menu Icon displayed on small screens -->
   <NavHamburger on:click={toggle} />
-  <!-- List of Navigation Links -->
   <NavUl {hidden}>
     <NavLi
       href={`#${HOME_ROUTE}`}
@@ -81,8 +78,6 @@
       <Megaphone size="18" />
       Decide
     </NavLi>
-
-    <!-- Theme Toggle Button -->
     <NavLi
       on:click={toggleTheme}
       class="flex gap-2 items-center cursor-pointer"

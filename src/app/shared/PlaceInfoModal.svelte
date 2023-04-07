@@ -8,13 +8,16 @@
     getGoogleMapsDirectionsURL,
   } from "../../utilities";
 
+  // External Variables
   export let restaurant: Restaurant;
   export let open = false;
 
+  // Component Variables
   let leafletMap: Leaflet.Map;
   let selectedLatLng: LatLng;
 
-  function createMap(container) {
+  // Component Setup
+  function initMap(container: HTMLElement) {
     selectedLatLng = restaurant.location;
 
     leafletMap = Leaflet.map(container, {
@@ -22,16 +25,17 @@
       closePopupOnClick: false,
       doubleClickZoom: false,
       dragging: false,
+      scrollWheelZoom: false,
       touchZoom: false,
       zoomControl: false,
-    }).setView(selectedLatLng, 14);
-
-    Leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      minZoom: 3,
-      maxZoom: 16,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(leafletMap);
+    })
+      .setView(selectedLatLng, 14)
+      .addLayer(
+        Leaflet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        })
+      );
 
     Leaflet.marker(selectedLatLng)
       .addTo(leafletMap)
@@ -39,14 +43,15 @@
         `<div class="flex flex-col gap-2 items-center">
             <b>${restaurant.name}</b>
             ${getFormattedAddress(restaurant.address)}
-        </div>`
+        </div>`,
+        {
+          autoClose: false,
+          closeButton: false,
+          closeOnClick: false,
+          closeOnEscapeKey: false,
+        }
       )
       .openPopup();
-    return leafletMap;
-  }
-
-  function mapAction(container) {
-    leafletMap = createMap(container);
 
     return {
       destroy: () => {
@@ -55,7 +60,8 @@
     };
   }
 
-  function openDirections(restaurant: Restaurant) {
+  // Component Functions
+  function openMapDirections(restaurant: Restaurant) {
     const directionsURL = getGoogleMapsDirectionsURL(restaurant);
     window.open(directionsURL, "_blank");
   }
@@ -67,14 +73,14 @@
       {restaurant.name} was selected!
     </span>
     {#if restaurant.location}
-      <div class="w-[80vw] md:w-[500px] h-[30vh] md:h-[500px]" use:mapAction />
+      <div class="w-[80vw] h-[30vh] md:w-[500px] md:h-[500px]" use:initMap />
     {:else if restaurant.address}
       <address>{getFormattedAddress(restaurant.address)}</address>
     {/if}
   </div>
   <div slot="footer" class="flex justify-center gap-2">
-    {#if restaurant.address || restaurant.location}
-      <Button color="primary" on:click={() => openDirections(restaurant)}>
+    {#if restaurant.address}
+      <Button color="primary" on:click={() => openMapDirections(restaurant)}>
         <MapPin size="18" class="mr-1" />
         <span class="font-bold">Get Directions</span>
       </Button>
