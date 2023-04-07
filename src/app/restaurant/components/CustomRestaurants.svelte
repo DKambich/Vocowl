@@ -23,7 +23,7 @@
     Restaurant,
   } from "../../../types";
   import { GUID } from "../../../utilities";
-  import PlacePickerModal from "../../shared/PlacePickerModal.svelte";
+  import { PlacePickerModal } from "../../shared";
 
   const states = US_STATES.map((state) => ({
     value: state.abbreviation,

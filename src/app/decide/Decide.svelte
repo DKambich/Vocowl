@@ -5,8 +5,7 @@
   import { localStorage } from "../../stores/localStorageStore";
   import type { Restaurant } from "../../types";
   import { PageBaseline } from "../meta";
-  import { IconMessage } from "../shared";
-  import PlaceInfoModal from "../shared/PlaceInfoModal.svelte";
+  import { IconMessage, PlaceInfoModal } from "../shared";
   import { RestaurantSelector } from "./";
 
   let restaurants = $localStorage.restaurants;
@@ -65,7 +64,7 @@
       {/if}
     </div>
     <div
-      class="col-span-1 row-span-2 min-h-[50vh] lg:col-span-2 lg:row-span-1 lg:min-h-0  relative"
+      class="col-span-1 row-span-2 min-h-[50vh] lg:col-span-2 lg:row-span-1 lg:min-h-0 relative"
     >
       <RestaurantSelector
         {restaurants}
