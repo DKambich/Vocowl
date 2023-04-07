@@ -35,24 +35,19 @@ if (!isPreferences(get(localStorage))) {
 
 // Set the App theme based on the current preferences
 if (get(localStorage).useDarkTheme) {
-  // Use a dark theme
   document.documentElement.classList.add("dark");
 } else {
-  // Use a light theme
   document.documentElement.classList.remove("dark");
 }
 
 export const toggleTheme = () => {
-  // Get the current theme
   const useDarkTheme = get(localStorage).useDarkTheme;
 
   // Toggle the App theme based on the current theme
-  if (!useDarkTheme) {
-    // Toggle from light to dark
-    document.documentElement.classList.add("dark");
-  } else {
-    // Toggle from dark to light
+  if (useDarkTheme) {
     document.documentElement.classList.remove("dark");
+  } else {
+    document.documentElement.classList.add("dark");
   }
 
   // Update Preference Store
@@ -86,6 +81,7 @@ export const removeRestaurant = (restaurant: string | Restaurant) => {
   } else {
     restaurantID = restaurant;
   }
+
   localStorage.update((prefs) => ({
     ...prefs,
     restaurants: prefs.restaurants.filter(

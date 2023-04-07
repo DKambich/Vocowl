@@ -9,10 +9,12 @@ export interface IGeocodingService {
     address: Address
   ) => Promise<ServiceResponse<LatLng>>;
 
-  getZipcodeFromLocation: (location: LatLng) => Promise<string>;
+  getZipcodeFromLocation: (
+    location: LatLng
+  ) => Promise<ServiceResponse<string>>;
 
   getLocationFromZipcode: (
     zipcode: string,
     countryCode?: string
-  ) => Promise<LatLng>;
+  ) => Promise<ServiceResponse<LatLng>>;
 }

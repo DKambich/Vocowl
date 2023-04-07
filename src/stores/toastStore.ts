@@ -1,28 +1,29 @@
 import { writable } from "svelte/store";
 import type { ToastOptions } from "../types";
+import { GUID } from "../utilities";
 
 export const toasts = writable<ToastOptions[]>([]);
 
-export const dismissToast = (id) => {
+const defaultOptions: ToastOptions = {
+  type: "info",
+  dismissible: true,
+  timeout: 5000,
+  message: "",
+};
+
+export const dismissToast = (id: string) => {
   toasts.update((all) => all.filter((toast) => toast.id !== id));
 };
 
 export const showToast = (toastProps: ToastOptions) => {
-  const id = Math.random().toString(16).slice(2);
+  const toastID = GUID();
 
-  // Setup some sensible defaults for a toast.
-  const defaultOptions: ToastOptions = {
-    id,
-    type: "info",
-    dismissible: true,
-    timeout: 5000,
-    message: id,
-  };
-
-  // Push the toast to the top of the list of toasts
-  const toast: ToastOptions = { ...defaultOptions, ...toastProps };
+  // Create and add the toast
+  const toast: ToastOptions = { ...defaultOptions, id: toastID, ...toastProps };
   toasts.update((all) => [...all, toast]);
 
   // If toast is dismissible, dismiss it after "timeout" amount of time.
-  if (toast.timeout) setTimeout(() => dismissToast(id), toast.timeout);
+  if (toast.timeout) {
+    setTimeout(() => dismissToast(toastID), toast.timeout);
+  }
 };

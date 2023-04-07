@@ -1,3 +1,4 @@
+import { MILES_TO_METERS } from "../constants";
 import { HERE_API_KEY } from "../credentials";
 import type { LatLng, Restaurant, ServiceResponse } from "../types";
 import type { IPOIService } from "./IPOIService";
@@ -26,20 +27,20 @@ type HereResponse = {
   ];
 };
 
+const BASE_RADIUS = MILES_TO_METERS * 5;
+
 export class HerePOIService implements IPOIService {
   private DISCOVER_URL = "https://discover.search.hereapi.com/v1/discover";
   private BROWSE_URL = "https://browse.search.hereapi.com/v1/browse";
 
   async getQueriedRestaurants(
     query: string,
-    location: LatLng,
-    options?: { radius?: number }
+    location: LatLng
   ): Promise<ServiceResponse<Restaurant[]>> {
-    const SEARCH_RADIUS_METERS = 8047;
     const QUERY = new URLSearchParams({
       apiKey: HERE_API_KEY,
       q: query,
-      in: `circle:${location.lat},${location.lng};r=${SEARCH_RADIUS_METERS}`,
+      in: `circle:${location.lat},${location.lng};r=${BASE_RADIUS}`,
     }).toString();
 
     try {
@@ -81,7 +82,7 @@ export class HerePOIService implements IPOIService {
     location: LatLng,
     options?: { radius?: number }
   ): Promise<ServiceResponse<Restaurant[]>> {
-    const SEARCH_RADIUS_METERS = Math.round(options.radius ?? 8047);
+    const SEARCH_RADIUS_METERS = Math.round(options.radius ?? BASE_RADIUS);
     const QUERY = new URLSearchParams({
       apiKey: HERE_API_KEY,
       at: `${location.lat},${location.lng}`,

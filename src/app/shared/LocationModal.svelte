@@ -54,33 +54,30 @@
       loadingGeolocation = true;
       navigator.geolocation.getCurrentPosition(
         async (location) => {
-          try {
-            // Geocode the user's zipcode from their location
-            userLocation = {
-              lat: location.coords.latitude,
-              lng: location.coords.longitude,
-            };
-            const zipcode = await geocodingService.getZipcodeFromLocation(
-              userLocation
-            );
+          // Geocode the user's zipcode from their location
+          userLocation = {
+            lat: location.coords.latitude,
+            lng: location.coords.longitude,
+          };
+          const [zipcode, error] =
+            await geocodingService.getZipcodeFromLocation(userLocation);
 
-            // If there is a zipcode
-            if (zipcode) {
-              // Update the modal
-              verifiedZipcode = zipcode;
+          // If there is a zipcode
+          if (zipcode) {
+            // Update the modal
+            verifiedZipcode = zipcode;
 
-              // Cache the user's location
-              cacheLocation(userLocation, zipcode);
+            // Cache the user's location
+            cacheLocation(userLocation, zipcode);
 
-              // Clear zipcode errors
-              zipcodeError = zipcodeErrors.NONE;
-              loadingGeolocation = false;
-              open = false;
-            } else {
-              zipcodeError = zipcodeErrors.UNKNOWN;
-            }
-          } catch (e) {
+            // Clear zipcode errors
+            zipcodeError = zipcodeErrors.NONE;
+            loadingGeolocation = false;
+            open = false;
+          } else if (error) {
             zipcodeError = zipcodeErrors.ERROR;
+          } else {
+            zipcodeError = zipcodeErrors.UNKNOWN;
           }
         },
         (error) => {
@@ -113,12 +110,15 @@
     }
 
     loadingZipcodeVerification = true;
-    try {
-      // Geocode the user's location  from their zipcode
-      const location = await geocodingService.getLocationFromZipcode(
-        userEnteredZipcode
-      );
 
+    // Geocode the user's location  from their zipcode
+    const [location, error] = await geocodingService.getLocationFromZipcode(
+      userEnteredZipcode
+    );
+
+    if (error) {
+      zipcodeError = zipcodeErrors.ERROR;
+    } else {
       verifiedZipcode = userEnteredZipcode;
 
       // Store the user's location
@@ -133,11 +133,8 @@
       // Clear zipcode errors
       zipcodeError = zipcodeErrors.NONE;
       open = false;
-    } catch (e) {
-      zipcodeError = zipcodeErrors.ERROR;
-    } finally {
-      loadingZipcodeVerification = false;
     }
+    loadingZipcodeVerification = false;
   }
 </script>
 
