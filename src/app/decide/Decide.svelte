@@ -8,15 +8,17 @@
   import { IconMessage, PlaceInfoModal } from "../shared";
   import { RestaurantSelector } from "./";
 
+  // Component Variables
   let restaurants = $localStorage.restaurants;
-  let isSpinning = false;
-
-  // Variable Bindings
-  let filteredRestaurants: Restaurant[] = [];
-  let startReel;
   let selectedRestaurant: Restaurant;
+  let isSpinning = false;
   let openPlaceDetails = false;
 
+  // Component Setup
+  let filteredRestaurants: Restaurant[] = [];
+  let startReel: () => void;
+
+  // Component Functions
   function onReelStart() {
     isSpinning = true;
   }
@@ -37,7 +39,7 @@
     <div
       class="col-span-1 row-span-2 min-h-[50vh] lg:col-span-3 lg:row-span-1 lg:min-h-0 flex flex-col gap-2"
     >
-      {#if filteredRestaurants.length > 0}
+      {#if filteredRestaurants.length}
         {#key filteredRestaurants.length}
           <Slot
             reelItems={filteredRestaurants}
@@ -67,9 +69,9 @@
       class="col-span-1 row-span-2 min-h-[50vh] lg:col-span-2 lg:row-span-1 lg:min-h-0 relative"
     >
       <RestaurantSelector
+        disabled={isSpinning}
         {restaurants}
         bind:filteredRestaurants
-        disabled={isSpinning}
       />
     </div>
   </div>
