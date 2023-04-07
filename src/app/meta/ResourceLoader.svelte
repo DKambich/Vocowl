@@ -21,9 +21,9 @@
     tooltipAnchor: [16, -28],
     shadowSize: [41, 41],
   });
-
   Leaflet.Marker.prototype.options.icon = DefaultIcon;
 
+  // Load any application resources
   let loading = true;
   let successful = false;
 
