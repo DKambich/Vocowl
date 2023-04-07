@@ -25,7 +25,8 @@
 </script>
 
 <div
-  class="fixed bottom-0 right-0 flex flex-col-reverse items-end gap-y-2 pb-2 pr-2 lg:pb-8 lg:pr-8 w-screen "
+  class="fixed bottom-0 right-0 flex flex-col-reverse items-end gap-y-2 pb-2 pr-2 lg:pb-8 lg:pr-8 w-screen"
+  style="z-index: 60"
 >
   {#each $toasts as toast (toast.id)}
     <Toast

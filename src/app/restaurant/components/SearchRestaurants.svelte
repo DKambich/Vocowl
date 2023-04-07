@@ -2,7 +2,7 @@
   import { Button, Card, Helper, Input, Spinner } from "flowbite-svelte";
   import { getContext } from "svelte";
   import { createForm } from "svelte-forms-lib";
-  import { MagnifyingGlass, Minus, Plus } from "svelte-heros-v2";
+  import { HandThumbDown, MagnifyingGlass, Minus, Plus } from "svelte-heros-v2";
   import { POI_SERVICE } from "../../../constants";
   import type { IPOIService } from "../../../services/IPOIService";
   import {
@@ -21,6 +21,7 @@
     getFormattedAddress,
     getGoogleMapsSearchURL,
   } from "../../../utilities";
+  import IconMessage from "../../shared/IconMessage.svelte";
 
   // External Variables
   export let location: LatLng;
@@ -28,6 +29,7 @@
   // Search Related Variables
   const poiService = getContext<IPOIService>(POI_SERVICE);
   let searchResults: Restaurant[] = [];
+  let hasSearched = false;
   let isSearchLoading = false;
 
   // Form Variables
@@ -58,9 +60,9 @@
       search,
       location
     );
+    hasSearched = true;
     isSearchLoading = false;
     if (error) {
-      // TODO: Handle error better
       showToast({
         message: "Something went wrong. Please try again.",
         type: "error",
@@ -124,6 +126,20 @@
   {$errors.search}
 </Helper>
 
+{#if searchResults.length === 0}
+  <div class="py-8">
+    {#if !hasSearched}
+      <IconMessage icon={MagnifyingGlass} size="lg">
+        Start Yor Search...
+      </IconMessage>
+    {:else}
+      <IconMessage icon={HandThumbDown} size="lg">
+        No Results Found. Please Try Another Search...
+      </IconMessage>
+    {/if}
+  </div>
+{/if}
+
 <div class="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
   {#each searchResults as result (result.id)}
     <Card size="lg">
@@ -146,7 +162,7 @@
               pill
               color="red"
               class="!p-1"
-              on:click={() => removeRestaurant(result)}
+              on:click={() => removeQueriedRestaurant(result)}
             >
               <Minus size="16" />
             </Button>

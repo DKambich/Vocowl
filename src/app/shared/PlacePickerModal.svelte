@@ -2,6 +2,7 @@
   import { Button, Modal } from "flowbite-svelte";
   import * as Leaflet from "leaflet";
   import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
+  import { showToast } from "../../stores/toastStore";
   import type { Address, LatLng } from "../../types";
 
   export let initialLocation: LatLng;
@@ -149,12 +150,10 @@
 
   async function pickPlace() {
     if (selectedAddress) {
-      console.log("Valid");
       onLocationSelected(selectedAddress, selectedLatLng);
       open = false;
     } else {
       try {
-        console.log("Trying to Search");
         const provider = new OpenStreetMapProvider();
         const results = await provider.search({
           query: `${selectedLatLng.lat},${selectedLatLng.lng}`,
@@ -162,14 +161,19 @@
 
         if (results.length) {
           selectedAddress = parseAddressFromLabel(results[0].label);
-          console.log("Worked");
           onLocationSelected(selectedAddress, selectedLatLng);
           open = false;
         } else {
-          // TODO: Handle error
+          showToast({
+            message: "No results were found. Please try again.",
+            type: "error",
+          });
         }
       } catch {
-        // TODO: Handle error
+        showToast({
+          message: "Something went wrong. Please try again.",
+          type: "error",
+        });
       }
     }
   }

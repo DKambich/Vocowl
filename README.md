@@ -2,7 +2,7 @@
 
 ![Vocowl](./docs/Vocowl%20Header.png "Vocowl")
 
-The idea of Vocowl came about from a simple question, "How do I pick where to eat?" Built using Svelte and utilizing the Leaflet and the HERE API, Vocowl let's you select nearby restaurants and enter your own favorites, then picks one at random. By settling this question, Vocowl is perfect for people who are not vocal and indecisive about their food opinions and pays homage to the wisdom of owls.
+The idea of Vocowl came about from a simple question, "How do I pick where to eat?" Built using Svelte and utilizing the Leaflet and the HERE API, Vocowl let's you select nearby restaurants and enter your own favorites, then picks one at random. By settling this question, Vocowl is perfect for people who are not vocal and indecisive about their food opinions and pays homage to the wisdom of owls. Currently, Vocowl is meant to be a US based service. In the future, support for other countries may be added.
 
 ## Instructions
 

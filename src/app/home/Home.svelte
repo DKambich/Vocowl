@@ -28,24 +28,24 @@
         <span class="font-bold"> Start Deciding </span>
       </Button>
     </ButtonGroup>
-    <Span italic>When in doubt, let Vocowl pick it out.</Span>
-    <P class="text-lg lg:text-xl xl:px-48 ">
+    <Span italic>When in doubt, let Vocowl pick it out</Span>
+    <P class="text-lg lg:text-xl xl:px-48 my-2">
       Welcome to Vocowl, the perfect solution for those who struggle with making
       food decisions. Do you find yourself constantly asking, "Where should I
       eat?" or feeling overwhelmed by all the restaurant options around you? If
       so, Vocowl is here to help.
     </P>
-    <P class="text-lg lg:text-xl xl:px-48">
+    <P class="text-lg lg:text-xl xl:px-48 my-2">
       The idea was born out of a simple question: "How do I pick where to eat?"
-      We understand that decision-making can be a challenge, especially when it
-      comes to food. That's why we built Vocowl; to help you easily select
-      nearby restaurants and even add your own favorites.
+      Decision-making can be a challenge, especially when it comes to food.
+      That's why Vocowl was built; to help you easily select nearby restaurants
+      and even add your own favorites.
     </P>
-    <P class="text-lg lg:text-xl xl:px-48">
-      As our name suggests, we pay homage to the wisdom of owls. Just as these
-      wise creatures have a reputation for making sound decisions, we believe
-      that Vocowl can help you do the same when it comes to food. So sit back,
-      relax, and let Vocowl choose your next dining destination.
+    <P class="text-lg lg:text-xl xl:px-48 my-2">
+      As the name suggests, Vocowl pays homage to the wisdom of owls. Just as
+      these wise creatures have a reputation for making sound decisions, Vocowl
+      can help you do the same when it comes to food. So sit back, relax, and
+      let Vocowl choose your next dining destination.
     </P>
   </div>
 </PageBaseline>

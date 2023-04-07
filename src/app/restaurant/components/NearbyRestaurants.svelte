@@ -11,6 +11,7 @@
   import * as Leaflet from "leaflet";
   import { afterUpdate, getContext, onDestroy } from "svelte";
   import {
+    HandThumbDown,
     MagnifyingGlass,
     MapPin,
     MinusCircle,
@@ -49,7 +50,7 @@
 
   // Internal Search Options state variables
   let searchRadius = 5;
-  let openNow = true;
+  let hasSearched = false;
   $: savedRestaurants = $localStorage.restaurants;
 
   const poiService = getContext<IPOIService>(POI_SERVICE);
@@ -108,9 +109,9 @@
       { radius: searchRadius * MILES_TO_METERS }
     );
 
+    hasSearched = true;
+
     if (error) {
-      // TODO: Handle error better
-      console.error(error);
       showToast({
         message: "Something went wrong. Please try again.",
         type: "error",
@@ -196,9 +197,14 @@
         </div>
       {/each}
       {#if nearbyRestaurants.length === 0}
-        <IconMessage class="py-4" icon={MagnifyingGlass} size="sm">
-          No Results Found...
-        </IconMessage>
+        {#if !hasSearched}
+          <IconMessage class="py-8" icon={MagnifyingGlass} size="md">
+            Start Your Search...
+          </IconMessage>
+        {:else}
+          <IconMessage class="py-8" icon={HandThumbDown} size="md">
+            No Results Found...
+          </IconMessage>{/if}
       {/if}
     </Listgroup>
     <Accordion flush>

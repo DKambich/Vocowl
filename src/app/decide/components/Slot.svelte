@@ -54,7 +54,7 @@
   }
 
   function initializeSlot(slotRef: HTMLElement, options: T[]) {
-    // TODO: Show Error?
+    // Don't initialize if there are no options
     if (options.length === 0) return;
 
     // Reset the top of the slot reel
@@ -112,7 +112,7 @@
 
 <svelte:window on:resize={resize} />
 <div
-  class="relative h-full w-full overflow-hidden rounded-lg shadow-inner shadow-black dark:shadow-slate-400"
+  class="relative h-full w-full overflow-hidden rounded-lg shadow-inner shadow-black dark:shadow-gray-500"
 >
   <div
     class="top-1/2 -translate-y-[15px] absolute left-0 w-0 h-0 border-l-[25px] border-primary-700 border-y-[15px] border-y-transparent z-10"
@@ -123,7 +123,7 @@
   <div id="slot" class="w-full h-full absolute text-center">
     {#each finalReelItems as option}
       <div
-        class="text-xl md:text-2xl  xl:text-3xl flex justify-center items-center overflow-hidden text-ellipsis dark:text-white border-t border-black dark:border-slate-600"
+        class="text-xl md:text-2xl  xl:text-3xl flex justify-center items-center overflow-hidden text-ellipsis dark:text-white border-t border-black dark:border-gray-600"
         style={`height: ${itemHeight}px; max-height: ${itemHeight}px;`}
       >
         {reelItemBuilder(option)}
