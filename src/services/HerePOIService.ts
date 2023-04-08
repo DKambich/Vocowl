@@ -27,7 +27,7 @@ type HereResponse = {
   ];
 };
 
-const BASE_RADIUS = MILES_TO_METERS * 5;
+const BASE_RADIUS = Math.round(MILES_TO_METERS * 5);
 
 export class HerePOIService implements IPOIService {
   private DISCOVER_URL = "https://discover.search.hereapi.com/v1/discover";
